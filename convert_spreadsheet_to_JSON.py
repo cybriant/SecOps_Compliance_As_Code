@@ -1,6 +1,9 @@
 import csv, json, pandas
 
-def map_to_json(in_file_name="NIST_to_SecOps.xlsx", out_file_name="NIST_CSF_2.0-SecOps.json"):
+inputFile = "NIST_to_SecOps.xlsx"
+outputFile = "NIST_CSF_2.0-SecOps.json"
+
+def map_to_json(in_file_name=inputFile, out_file_name=outputFile):
     """
     Converts a compliance spreadsheet into a JSON file which can then be used to
     perform operations against a SecOps instance.

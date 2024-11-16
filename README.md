@@ -16,8 +16,7 @@ After clonining the repo (or simply downloading the script needed perform the fo
 
 
 ## Files
-#### NIST_to_SecOps.xlsx
-
+#### NIST_to_SecOps.xlsx  
 This is an Excel file from which a JSON file will be created and used by the compliance scripts.  The file specifies all of the attributes that can be used in the compliance reports as well as the UDM queries that will executed in Google SecOps.  The file in the repository is applicable to NIST CSF 2.0, but can be used as a template for other compliance frameworks.  The following is a summary of the columns present:
 
 **Function**:  Highest level of function for the framework (NIST:  Identify, Protect, Detect, Respond, and Recover) 
@@ -56,3 +55,16 @@ reference.  Instead, this specific example may serve to fulfill some or all of t
 **Pretty Print Queries**:  A pretty print version of the YARA-L Aggregate Query that will be executed in SecOps.
 
 **API Queries**:  Deprecated.  Unused.
+
+
+#### convert_spreadsheet_to_JSON.py
+This script takes a flat compliance spreadsheet and converts it to a JSON file.  _Note:  The file must be flat and have no need of nested processing._
+
+***Functions***  
+**map_to_json(in_file_name=inputFile, out_file_name=outputFile):**  
+Converts a compliance spreadsheet into a JSON file which can then be used to
+perform operations against a SecOps instance.
+:param in_file_name: This is the spreadsheet to convert to JSON.
+:param out_file_name: This is output JSON file name.
+:return: This is the JSON file name and data.
+ 
