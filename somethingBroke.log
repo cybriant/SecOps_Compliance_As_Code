@@ -16,3 +16,4 @@ Subcategory: ID.AM-01  Example: Ex1:  {'error': {'code': 400, 'message': 'generi
 Subcategory: ID.AM-01  Example: Ex1:  {'error': {'code': 400, 'message': 'generic::invalid_argument: compilation error query uses a feature that is not yet allowed: invalid argument', 'status': 'INVALID_ARGUMENT'}}
 Subcategory: ID.AM-01  Example: Ex1:  {'error': {'code': 400, 'message': 'generic::invalid_argument: compilation error query uses a feature that is not yet allowed: invalid argument', 'status': 'INVALID_ARGUMENT'}}
 Subcategory: ID.AM-01  Example: Ex1:  {'error': {'code': 400, 'message': 'generic::invalid_argument: compilation error query uses a feature that is not yet allowed: invalid argument', 'status': 'INVALID_ARGUMENT'}}
+Subcategory: ID.AM-01  Example: Ex1:  {'error': {'code': 400, 'message': 'generic::invalid_argument: compilation error query uses a feature that is not yet allowed: invalid argument', 'status': 'INVALID_ARGUMENT'}}

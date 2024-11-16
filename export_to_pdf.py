@@ -115,6 +115,7 @@ def json_to_pdf(json_data, dates=None, directory=None):
     pdf.output(".".join((directory, title_information, "pdf")), "F")
 
 
+
 if __name__ == '__main__':
     from consts import DATES_TO_CHECK
     with open("sample_report_data.json", "r") as f:

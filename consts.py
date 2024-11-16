@@ -16,7 +16,7 @@ COMPLIANCE_FIELD_NAMES = ['Category', 'Category Description', 'Subcategory', 'Su
                           ]
 COMPLIANCE_JSON_FILE = 'NIST_CSF_2.0-SecOps.json'
 DATES_TO_CHECK = ["10-20-2024", "09-20-2024", "08-20-2024"]
-USE_DUMMY_DATA = False
+USE_DUMMY_DATA = True
 
 ENDPOINTS = {
     "udm_search": "v1/events:udmSearch",

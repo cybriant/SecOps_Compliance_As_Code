@@ -266,7 +266,7 @@ if __name__ == '__main__':
                             somethingBrokeFile.writelines(theText)
 
         #Create JSON version of report data
-        with open('outputJsonFile.json', 'w') as outputFile:
+        with open('/'.join((complianceReportDirectory, 'outputJsonFile.json')) , 'w') as outputFile:
             json.dump(compliance_list, outputFile)
 
         #Create PDF reports of each compliance example
