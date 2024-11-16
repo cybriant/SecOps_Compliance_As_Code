@@ -112,7 +112,7 @@ def json_to_pdf(json_data, dates=None, directory=None):
 
 
     # Output usable PDF file
-    pdf.output(".".join((directory, title_information, "pdf")), "F")
+    pdf.output("/".join((directory, ".".join((title_information, "pdf")))), "F")
 
 
 
@@ -123,4 +123,4 @@ if __name__ == '__main__':
 
     sample_json_data = sample_json_data[0]
 
-    json_to_pdf(sample_json_data, DATES_TO_CHECK, 'ComplianceReports/')
+    json_to_pdf(sample_json_data, DATES_TO_CHECK, 'ComplianceReports')

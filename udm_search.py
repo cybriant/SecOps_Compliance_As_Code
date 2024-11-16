@@ -57,7 +57,7 @@ def load_creds_into_google_credentials(inputFile, outputFile, credsType='BACKSTO
     #Load the Google credentials into the Google auth framework
     return service_account.Credentials.from_service_account_file(outputFile, scopes=consts.SCOPES)
 
-def get_events_by_udm_query(mySession, query, start_time, end_time, limit=100):
+def get_events_by_udm_query(mySession, query, start_time, end_time, limit=consts.DEFAULT_LIMIT):
     """
     Get events by udm query
     This is a modified version of the GoogleChronicle SOAR Python function.
@@ -272,6 +272,6 @@ if __name__ == '__main__':
         #Create PDF reports of each compliance example
         for each in compliance_list:
             #Export each compliance example to PDF using the appropiate dates and directory
-            export_to_pdf.json_to_pdf(each, consts.DATES_TO_CHECK, '.'.join((complianceReportDirectory, "/")))
+            export_to_pdf.json_to_pdf(each, consts.DATES_TO_CHECK, ''.join((complianceReportDirectory, "/")))
 
     run_main()
