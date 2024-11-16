@@ -1,0 +1,2339 @@
+﻿Function,Category,Subcategory,Implementation Examples,Informative References,Exportable From SIEM,API,Difficulty,Comments,Linked Query,Vendor,Query Version,Dashboard Name,Pretty Print Queries,API Queries
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy",ID.AM-01: Inventories of hardware managed by the organization are maintained,"Ex1: Maintain inventories for all types of hardware, including IT, IoT, OT, and mobile devices","CCMv4.0: CCC-04
+CCMv4.0: DCS-06
+CCMv4.0: DSP-19
+CCMv4.0: UEM-04
+CIS Controls v8.0: 1.1
+CRI Profile v2.0: ID.AM-01
+CRI Profile v2.0: ID.AM-01.01
+CSF v1.1: ID.AM-1
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: CM-08
+SP 800-53 Rev 5.1.1: PM-05",Yes,UDM Search with YL2,Done,This search will pull all hostnames SecOps has seen from all hostname fields and log source types.,FALSE,Agnostic,1.0,,"$hostname = group($e.principal.hostname,$e.target.hostname,$e.src.hostname,$e.intermediary.hostname,$e.observer.hostname,$e.principal.asset.hostname,$e.src.asset.hostname,$e.target.asset.hostname)
+$hostname = /.*/
+match:
+    $hostname
+outcome:
+	$logsSeen = array_distinct($e.metadata.log_type)
+order:
+	$hostname",
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy",ID.AM-01: Inventories of hardware managed by the organization are maintained,Ex2: Constantly monitor networks to detect new hardware and automatically update inventories,"CCMv4.0: CCC-04
+CCMv4.0: DCS-06
+CCMv4.0: DSP-19
+CCMv4.0: UEM-04
+CIS Controls v8.0: 1.1
+CRI Profile v2.0: ID.AM-01
+CRI Profile v2.0: ID.AM-01.01
+CSF v1.1: ID.AM-1
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: CM-08
+SP 800-53 Rev 5.1.1: PM-05",Yes,Dashboard Export API,Done,"In Google SecOps some parsers append specific metadata to declare the type of entity that was involved in the event.  The UDM for it is ""metadata.entity_type"".  However, as of Q3 2024 UDM Search will not search with the metadata.entity_type keyword.  However, it is possible to retrieve this data via the Dashboarding functionality in SecOps.  To retrieve this data, a dashboard must first be created.  Afterwards, the dashboard may be exported via API.  UDM fields expected to use are the following:   principal.asset.hostname, metadata.log_type, and some sort of first seen date that will populate without showing 1970-01-01.
+
+Dashboard Name:  R2 ID.AM-01 Ex2 - Detect New Hardware",FALSE,Agnostic,1.0,R2 ID.AM-01 Ex2 - Detect New Hardware,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy","ID.AM-02: Inventories of software, services, and systems managed by the organization are maintained","Ex1: Maintain inventories for all types of software and services, including commercial-off-the-shelf, open-source, custom applications, API services, and cloud-based applications and services","CCMv4.0: CCC-04
+CCMv4.0: DCS-06
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CCMv4.0: UEM-04
+CIS Controls v8.0: 2.1
+CRI Profile v2.0: ID.AM-02
+CRI Profile v2.0: ID.AM-02.01
+CSF v1.1: ID.AM-2
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: AC-20
+SP 800-53 Rev 5.1.1: CM-08
+SP 800-53 Rev 5.1.1: PM-05
+SP 800-53 Rev 5.1.1: SA-05
+SP 800-53 Rev 5.1.1: SA-09",Partial,UDM Search with YL2,Unverified,"All log data sources can be pulled for applications, hosts, and cloud technologies sending logs.  Software names should be able to be ingested if there is a parser as the field about.asset.software.name exists.
+
+Note:  The following query is syntatically correct, but there was no data source that correctly parses to the about.asset.software.name UDM field.",FALSE,Agnostic,Alpha,,"$software = $e.about.asset.software.name
+$software = /.*/
+
+match:
+    $software
+
+outcome:
+    $softwareVendor = array_distinct($e.about.asset.software.vendor_name)
+    $softwareVersion = array_distinct($e.about.asset.software.version)
+    $softwareDescription = array_distinct($e.about.asset.software.description)
+
+order:
+    $software",
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy","ID.AM-02: Inventories of software, services, and systems managed by the organization are maintained","Ex2: Constantly monitor all platforms, including containers and virtual machines, for software and service inventory changes","CCMv4.0: CCC-04
+CCMv4.0: DCS-06
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CCMv4.0: UEM-04
+CIS Controls v8.0: 2.1
+CRI Profile v2.0: ID.AM-02
+CRI Profile v2.0: ID.AM-02.01
+CSF v1.1: ID.AM-2
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: AC-20
+SP 800-53 Rev 5.1.1: CM-08
+SP 800-53 Rev 5.1.1: PM-05
+SP 800-53 Rev 5.1.1: SA-05
+SP 800-53 Rev 5.1.1: SA-09",No,None,,A software inventory update function would need to be configured to operate with SecOps.  This would require further research,FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy","ID.AM-02: Inventories of software, services, and systems managed by the organization are maintained",Ex3: Maintain an inventory of the organization's systems,"CCMv4.0: CCC-04
+CCMv4.0: DCS-06
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CCMv4.0: UEM-04
+CIS Controls v8.0: 2.1
+CRI Profile v2.0: ID.AM-02
+CRI Profile v2.0: ID.AM-02.01
+CSF v1.1: ID.AM-2
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: AC-20
+SP 800-53 Rev 5.1.1: CM-08
+SP 800-53 Rev 5.1.1: PM-05
+SP 800-53 Rev 5.1.1: SA-05
+SP 800-53 Rev 5.1.1: SA-09",Yes,UDM Search with YL2,Done,This query pulls the same information that is contained in ID.AM-01 Ex1,ID.AM-01 Ex1,Agnostic,1.0,,"$hostname = group($e.principal.hostname,$e.target.hostname,$e.src.hostname,$e.intermediary.hostname,$e.observer.hostname,$e.principal.asset.hostname,$e.src.asset.hostname,$e.target.asset.hostname)
+$hostname = /.*/
+match:
+    $hostname
+outcome:
+	$logsSeen = array_distinct($e.metadata.log_type)
+order:
+	$hostname",
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy","ID.AM-05: Assets are prioritized based on classification, criticality, resources, and impact on the mission",Ex1: Define criteria for prioritizing each class of assets,"CCMv4.0: CEK-04
+CCMv4.0: DCS-05
+CCMv4.0: DSP-04
+CIS Controls v8.0: 3.7
+CRI Profile v2.0: ID.AM-05
+CRI Profile v2.0: ID.AM-05.01
+CRI Profile v2.0: ID.AM-05.02
+CSF v1.1: ID.AM-5
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-09
+SP 800-53 Rev 5.1.1: RA-02",No,None,,"This would require a policy, and cannot be done programmatically.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy","ID.AM-05: Assets are prioritized based on classification, criticality, resources, and impact on the mission",Ex2: Apply the prioritization criteria to assets,"CCMv4.0: CEK-04
+CCMv4.0: DCS-05
+CCMv4.0: DSP-04
+CIS Controls v8.0: 3.7
+CRI Profile v2.0: ID.AM-05
+CRI Profile v2.0: ID.AM-05.01
+CRI Profile v2.0: ID.AM-05.02
+CSF v1.1: ID.AM-5
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-09
+SP 800-53 Rev 5.1.1: RA-02",No,Requires SecOps ingesting custom labeling.,,"This could be done as a custom label when ingesting data from a source uploading asset data (for example, Cybriant Axonius Asset Uploader, or the Active Directory Powershell scripts that upload asset data).",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy","ID.AM-05: Assets are prioritized based on classification, criticality, resources, and impact on the mission",Ex3: Track the asset priorities and update them periodically or when significant changes to the organization occur,"CCMv4.0: CEK-04
+CCMv4.0: DCS-05
+CCMv4.0: DSP-04
+CIS Controls v8.0: 3.7
+CRI Profile v2.0: ID.AM-05
+CRI Profile v2.0: ID.AM-05.01
+CRI Profile v2.0: ID.AM-05.02
+CSF v1.1: ID.AM-5
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-09
+SP 800-53 Rev 5.1.1: RA-02",No,Requires SecOps ingesting custom labeling.,,"This could be done as a custom label when ingesting data from a source uploading asset data (for example, Cybriant Axonius Asset Uploader, or the Active Directory Powershell scripts that upload asset data).",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy",ID.AM-07: Inventories of data and corresponding metadata for designated data types are maintained,"Ex1: Maintain a list of the designated data types of interest (e.g., personally identifiable information, protected health information, financial account numbers, organization intellectual property, operational technology data)","CCMv4.0: DSP-01
+CCMv4.0: DSP-03
+CCMv4.0: DSP-04
+CCMv4.0: DSP-06
+CCMv4.0: DSP-10
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CIS Controls v8.0: 3.2
+CRI Profile v2.0: ID.AM-07
+CRI Profile v2.0: ID.AM-07.01
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: CM-12
+SP 800-53 Rev 5.1.1: CM-13
+SP 800-53 Rev 5.1.1: SI-12",No,Requires SecOps ingesting custom labeling.,,"This could be accomplished via custom labels, and extending the ingested logs from the log source with the appropriate data source type (PII, protected health information, financial account numbers, etc)",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy",ID.AM-07: Inventories of data and corresponding metadata for designated data types are maintained,Ex2: Continuously discover and analyze ad hoc data to identify new instances of designated data types,"CCMv4.0: DSP-01
+CCMv4.0: DSP-03
+CCMv4.0: DSP-04
+CCMv4.0: DSP-06
+CCMv4.0: DSP-10
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CIS Controls v8.0: 3.2
+CRI Profile v2.0: ID.AM-07
+CRI Profile v2.0: ID.AM-07.01
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: CM-12
+SP 800-53 Rev 5.1.1: CM-13
+SP 800-53 Rev 5.1.1: SI-12",No,Requires SecOps ingesting custom labeling.,,This would require a custom query based on the specific data source.,FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy",ID.AM-07: Inventories of data and corresponding metadata for designated data types are maintained,Ex3: Assign data classifications to designated data types through tags or labels,"CCMv4.0: DSP-01
+CCMv4.0: DSP-03
+CCMv4.0: DSP-04
+CCMv4.0: DSP-06
+CCMv4.0: DSP-10
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CIS Controls v8.0: 3.2
+CRI Profile v2.0: ID.AM-07
+CRI Profile v2.0: ID.AM-07.01
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: CM-12
+SP 800-53 Rev 5.1.1: CM-13
+SP 800-53 Rev 5.1.1: SI-12",No,None,,"This would be handled via organizational policy, or by a DLP technology to auto-label based specific requirements.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Asset Management (ID.AM): Assets (e.g., data, hardware, software, systems, facilities, services, people) that enable the organization to achieve business purposes are identified and managed consistent with their relative importance to organizational objectives and the organization's risk strategy",ID.AM-07: Inventories of data and corresponding metadata for designated data types are maintained,"Ex4: Track the provenance, data owner, and geolocation of each instance of designated data types","CCMv4.0: DSP-01
+CCMv4.0: DSP-03
+CCMv4.0: DSP-04
+CCMv4.0: DSP-06
+CCMv4.0: DSP-10
+CCMv4.0: DSP-19
+CCMv4.0: UEM-02
+CIS Controls v8.0: 3.2
+CRI Profile v2.0: ID.AM-07
+CRI Profile v2.0: ID.AM-07.01
+SP 800-221A: MA.RI-1
+SP 800-53 Rev 5.1.1: CM-12
+SP 800-53 Rev 5.1.1: CM-13
+SP 800-53 Rev 5.1.1: SI-12",Yes,UDM Search with YL2,Custom,"This need to be based on specific data log sources.  For example, some Azure Active Directory logs will provide this information.",FALSE,CustomRequired,None,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization","ID.RA-01: Vulnerabilities in assets are identified, validated, and recorded",Ex1: Use vulnerability management technologies to identify unpatched and misconfigured software,"CCMv4.0: AIS-05
+CCMv4.0: AIS-07
+CCMv4.0: TVM-01
+CCMv4.0: TVM-03
+CCMv4.0: TVM-05
+CCMv4.0: TVM-06
+CCMv4.0: TVM-07
+CCMv4.0: TVM-08
+CCMv4.0: TVM-09
+CCMv4.0: TVM-10
+CIS Controls v8.0: 7.1
+CRI Profile v2.0: ID.RA-01
+CRI Profile v2.0: ID.RA-01.01
+CRI Profile v2.0: ID.RA-01.02
+CRI Profile v2.0: ID.RA-01.03
+CSF v1.1: ID.RA-1
+CSF v1.1: PR.IP-12
+CSF v1.1: DE.CM-8
+SP 800-218: PO.5.2
+SP 800-221A: MA.RI-3
+SP 800-53 Rev 5.1.1: CA-02
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CA-08
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-05
+SP 800-53 Rev 5.1.1: SA-11(02)
+SP 800-53 Rev 5.1.1: SA-15(07)
+SP 800-53 Rev 5.1.1: SA-15(08)
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-05",Yes,UDM Search with YL2,Unverified,This requires a vulnerability scanning technology that can upload vulnerability results to SecOps.  For example:  Tenable.io or Qualys.,FALSE,Agnostic,Alpha,,"$vulnerability = $e.about.asset.vulnerabilities.name 
+$vulnerability = /.*/
+
+match:
+    $vulnerability
+
+outcome: 
+    $hostname = array_distinct($e.about.asset.hostname)
+    $vendor = array_distinct($e.about.asset.vulnerabilities.vendor)
+    $severity = array_distinct($e.about.asset.vulnerabilities.severity)
+    $lastScan = timestamp.get_date(max($e.about.asset.vulnerabilities.last_found.seconds))
+
+order:
+    $hostname",
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization","ID.RA-01: Vulnerabilities in assets are identified, validated, and recorded",Ex2: Assess network and system architectures for design and implementation weaknesses that affect cybersecurity,"CCMv4.0: AIS-05
+CCMv4.0: AIS-07
+CCMv4.0: TVM-01
+CCMv4.0: TVM-03
+CCMv4.0: TVM-05
+CCMv4.0: TVM-06
+CCMv4.0: TVM-07
+CCMv4.0: TVM-08
+CCMv4.0: TVM-09
+CCMv4.0: TVM-10
+CIS Controls v8.0: 7.1
+CRI Profile v2.0: ID.RA-01
+CRI Profile v2.0: ID.RA-01.01
+CRI Profile v2.0: ID.RA-01.02
+CRI Profile v2.0: ID.RA-01.03
+CSF v1.1: ID.RA-1
+CSF v1.1: PR.IP-12
+CSF v1.1: DE.CM-8
+SP 800-218: PO.5.2
+SP 800-221A: MA.RI-3
+SP 800-53 Rev 5.1.1: CA-02
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CA-08
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-05
+SP 800-53 Rev 5.1.1: SA-11(02)
+SP 800-53 Rev 5.1.1: SA-15(07)
+SP 800-53 Rev 5.1.1: SA-15(08)
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-05",No,None,,"This would be handled via organizational policy, diagrams, and review of related information.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization","ID.RA-01: Vulnerabilities in assets are identified, validated, and recorded","Ex3: Review, analyze, or test organization-developed software to identify design, coding, and default configuration vulnerabilities","CCMv4.0: AIS-05
+CCMv4.0: AIS-07
+CCMv4.0: TVM-01
+CCMv4.0: TVM-03
+CCMv4.0: TVM-05
+CCMv4.0: TVM-06
+CCMv4.0: TVM-07
+CCMv4.0: TVM-08
+CCMv4.0: TVM-09
+CCMv4.0: TVM-10
+CIS Controls v8.0: 7.1
+CRI Profile v2.0: ID.RA-01
+CRI Profile v2.0: ID.RA-01.01
+CRI Profile v2.0: ID.RA-01.02
+CRI Profile v2.0: ID.RA-01.03
+CSF v1.1: ID.RA-1
+CSF v1.1: PR.IP-12
+CSF v1.1: DE.CM-8
+SP 800-218: PO.5.2
+SP 800-221A: MA.RI-3
+SP 800-53 Rev 5.1.1: CA-02
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CA-08
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-05
+SP 800-53 Rev 5.1.1: SA-11(02)
+SP 800-53 Rev 5.1.1: SA-15(07)
+SP 800-53 Rev 5.1.1: SA-15(08)
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-05",No,None,,"This would be handled via organizational policy, source code, and review of related information.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization","ID.RA-01: Vulnerabilities in assets are identified, validated, and recorded",Ex4: Assess facilities that house critical computing assets for physical vulnerabilities and resilience issues,"CCMv4.0: AIS-05
+CCMv4.0: AIS-07
+CCMv4.0: TVM-01
+CCMv4.0: TVM-03
+CCMv4.0: TVM-05
+CCMv4.0: TVM-06
+CCMv4.0: TVM-07
+CCMv4.0: TVM-08
+CCMv4.0: TVM-09
+CCMv4.0: TVM-10
+CIS Controls v8.0: 7.1
+CRI Profile v2.0: ID.RA-01
+CRI Profile v2.0: ID.RA-01.01
+CRI Profile v2.0: ID.RA-01.02
+CRI Profile v2.0: ID.RA-01.03
+CSF v1.1: ID.RA-1
+CSF v1.1: PR.IP-12
+CSF v1.1: DE.CM-8
+SP 800-218: PO.5.2
+SP 800-221A: MA.RI-3
+SP 800-53 Rev 5.1.1: CA-02
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CA-08
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-05
+SP 800-53 Rev 5.1.1: SA-11(02)
+SP 800-53 Rev 5.1.1: SA-15(07)
+SP 800-53 Rev 5.1.1: SA-15(08)
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-05",No,None,,"This would be handled via organizational policy, physical infrastructure facilities, and review of related information.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization","ID.RA-01: Vulnerabilities in assets are identified, validated, and recorded",Ex5: Monitor sources of cyber threat intelligence for information on new vulnerabilities in products and services,"CCMv4.0: AIS-05
+CCMv4.0: AIS-07
+CCMv4.0: TVM-01
+CCMv4.0: TVM-03
+CCMv4.0: TVM-05
+CCMv4.0: TVM-06
+CCMv4.0: TVM-07
+CCMv4.0: TVM-08
+CCMv4.0: TVM-09
+CCMv4.0: TVM-10
+CIS Controls v8.0: 7.1
+CRI Profile v2.0: ID.RA-01
+CRI Profile v2.0: ID.RA-01.01
+CRI Profile v2.0: ID.RA-01.02
+CRI Profile v2.0: ID.RA-01.03
+CSF v1.1: ID.RA-1
+CSF v1.1: PR.IP-12
+CSF v1.1: DE.CM-8
+SP 800-218: PO.5.2
+SP 800-221A: MA.RI-3
+SP 800-53 Rev 5.1.1: CA-02
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CA-08
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-05
+SP 800-53 Rev 5.1.1: SA-11(02)
+SP 800-53 Rev 5.1.1: SA-15(07)
+SP 800-53 Rev 5.1.1: SA-15(08)
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-05",No,None,,"This may be harvestable if Google is ingesting a custom threat feed, and the feeds API it utilized to determine whether it is functioning correctly.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization","ID.RA-01: Vulnerabilities in assets are identified, validated, and recorded",Ex6: Review processes and procedures for weaknesses that could be exploited to affect cybersecurity,"CCMv4.0: AIS-05
+CCMv4.0: AIS-07
+CCMv4.0: TVM-01
+CCMv4.0: TVM-03
+CCMv4.0: TVM-05
+CCMv4.0: TVM-06
+CCMv4.0: TVM-07
+CCMv4.0: TVM-08
+CCMv4.0: TVM-09
+CCMv4.0: TVM-10
+CIS Controls v8.0: 7.1
+CRI Profile v2.0: ID.RA-01
+CRI Profile v2.0: ID.RA-01.01
+CRI Profile v2.0: ID.RA-01.02
+CRI Profile v2.0: ID.RA-01.03
+CSF v1.1: ID.RA-1
+CSF v1.1: PR.IP-12
+CSF v1.1: DE.CM-8
+SP 800-218: PO.5.2
+SP 800-221A: MA.RI-3
+SP 800-53 Rev 5.1.1: CA-02
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CA-08
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-05
+SP 800-53 Rev 5.1.1: SA-11(02)
+SP 800-53 Rev 5.1.1: SA-15(07)
+SP 800-53 Rev 5.1.1: SA-15(08)
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-05",No,None,,This would be handled via organizational review according to policy and procedures.,FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization",ID.RA-02: Cyber threat intelligence is received from information sharing forums and sources,Ex1: Configure cybersecurity tools and technologies with detection or response capabilities to securely ingest cyber threat intelligence feeds,"CCMv4.0: GRC-08
+CCMv4.0: TVM-04
+CRI Profile v2.0: ID.RA-02
+CRI Profile v2.0: ID.RA-02.01
+CRI Profile v2.0: ID.RA-02.02
+CSF v1.1: ID.RA-2
+SP 800-221A: GV.BE-4
+SP 800-53 Rev 5.1.1: SI-05
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16",No,None,,"This may be harvestable if Google is ingesting a custom threat feed, and the feeds API it utilized to determine whether it is functioning correctly.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization",ID.RA-02: Cyber threat intelligence is received from information sharing forums and sources,"Ex2: Receive and review advisories from reputable third parties on current threat actors and their tactics, techniques, and procedures (TTPs)","CCMv4.0: GRC-08
+CCMv4.0: TVM-04
+CRI Profile v2.0: ID.RA-02
+CRI Profile v2.0: ID.RA-02.01
+CRI Profile v2.0: ID.RA-02.02
+CSF v1.1: ID.RA-2
+SP 800-221A: GV.BE-4
+SP 800-53 Rev 5.1.1: SI-05
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16",No,None,,"This would need to be performed manually, and should be done in accordance with organizational policys and procedures.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization",ID.RA-02: Cyber threat intelligence is received from information sharing forums and sources,Ex3: Monitor sources of cyber threat intelligence for information on the types of vulnerabilities that emerging technologies may have,"CCMv4.0: GRC-08
+CCMv4.0: TVM-04
+CRI Profile v2.0: ID.RA-02
+CRI Profile v2.0: ID.RA-02.01
+CRI Profile v2.0: ID.RA-02.02
+CSF v1.1: ID.RA-2
+SP 800-221A: GV.BE-4
+SP 800-53 Rev 5.1.1: SI-05
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16",No,None,,"This may be harvestable if Google is ingesting a custom threat feed, and the feeds API it utilized to determine whether it is functioning correctly.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization",ID.RA-03: Internal and external threats to the organization are identified and recorded,Ex1: Use cyber threat intelligence to maintain awareness of the types of threat actors likely to target the organization and the TTPs they are likely to use,"CCMv4.0: A&A-05
+CCMv4.0: TVM-05
+CRI Profile v2.0: ID.RA-03
+CRI Profile v2.0: ID.RA-03.01
+CRI Profile v2.0: ID.RA-03.02
+CRI Profile v2.0: ID.RA-03.03
+CRI Profile v2.0: ID.RA-03.04
+CSF v1.1: ID.RA-3
+SP 800-221A: MA.RI-2
+SP 800-53 Rev 5.1.1: PM-12
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: SI-05",No,None,,"This would be handled via orgnizational policies and policies, and via due diligence by staff through security awareness (phishing education, CISA alerts, ISAC reports, et cetera.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization",ID.RA-03: Internal and external threats to the organization are identified and recorded,Ex2: Perform threat hunting to look for signs of threat actors within the environment,"CCMv4.0: A&A-05
+CCMv4.0: TVM-05
+CRI Profile v2.0: ID.RA-03
+CRI Profile v2.0: ID.RA-03.01
+CRI Profile v2.0: ID.RA-03.02
+CRI Profile v2.0: ID.RA-03.03
+CRI Profile v2.0: ID.RA-03.04
+CSF v1.1: ID.RA-3
+SP 800-221A: MA.RI-2
+SP 800-53 Rev 5.1.1: PM-12
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: SI-05",Yes,Chronicle API Needs Research,,"It appears that Shared Saved Searches can be retrieved via the API.  Specifically, the IAM permissions lists the permission:  chronicle.searchQueries.list and the API method:  UserDataService.ListSearchQueries/.  
+
+This will require further information.",FALSE,,,,,
+IDENTIFY (ID): The organization's current cybersecurity risks are understood,"Risk Assessment (ID.RA): The cybersecurity risk to the organization, assets, and individuals is understood by the organization",ID.RA-03: Internal and external threats to the organization are identified and recorded,Ex3: Implement processes for identifying internal threat actors,"CCMv4.0: A&A-05
+CCMv4.0: TVM-05
+CRI Profile v2.0: ID.RA-03
+CRI Profile v2.0: ID.RA-03.01
+CRI Profile v2.0: ID.RA-03.02
+CRI Profile v2.0: ID.RA-03.03
+CRI Profile v2.0: ID.RA-03.04
+CSF v1.1: ID.RA-3
+SP 800-221A: MA.RI-2
+SP 800-53 Rev 5.1.1: PM-12
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: SI-05",No,None,,"This would be handled via organizational policies and procedures.  However, there are some SecOps rules that will identify potential insider threats.",FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-01: Identities and credentials for authorized users, services, and hardware are managed by the organization","Ex1: Initiate requests for new access or additional access for employees, contractors, and others, and track, review, and fulfill the requests, with permission from system or data owners when needed","CCMv4.0: CEK-01
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-09
+CCMv4.0: IAM-13
+CCMv4.0: IAM-14
+CCMv4.0: IAM-15
+CCMv4.0: IAM-16
+CCMv4.0: UEM-14
+CIS Controls v8.0: 5.1
+CIS Controls v8.0: 6.7
+CRI Profile v2.0: PR.AA-01
+CRI Profile v2.0: PR.AA-01.01
+CRI Profile v2.0: PR.AA-01.02
+CSF v1.1: PR.AC-1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-14
+SP 800-53 Rev 5.1.1: IA-01
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-04
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-06
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",No,None,,This would be performed via policies and procedures.  Evidence would likely be gathered via tickets.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-01: Identities and credentials for authorized users, services, and hardware are managed by the organization","Ex2: Issue, manage, and revoke cryptographic certificates and identity tokens, cryptographic keys (i.e., key management), and other credentials","CCMv4.0: CEK-01
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-09
+CCMv4.0: IAM-13
+CCMv4.0: IAM-14
+CCMv4.0: IAM-15
+CCMv4.0: IAM-16
+CCMv4.0: UEM-14
+CIS Controls v8.0: 5.1
+CIS Controls v8.0: 6.7
+CRI Profile v2.0: PR.AA-01
+CRI Profile v2.0: PR.AA-01.01
+CRI Profile v2.0: PR.AA-01.02
+CSF v1.1: PR.AC-1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-14
+SP 800-53 Rev 5.1.1: IA-01
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-04
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-06
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",Yes,UDM Search with YL2,Done,"Evidence of these actions should be discoverable in the logs.  However, it will take research to determine which logs would be appropriate.",FALSE,Microsoft Azure,1.0,,"$e.additional.fields[""targetResources.modifiedProperties.newValue 0""] = /KeyIdentifier.*/
+$e.additional.fields[""targetResources.modifiedProperties.oldValue 0""] = /KeyIdentifier.*/
+$e.metadata.log_type = ""AZURE_AD_AUDIT""
+$e.metadata.product_event_type = ""Update application – Certificates and secrets management ""
+
+$date = timestamp.get_date($e.metadata.event_timestamp.seconds)
+
+match:
+    $date
+
+outcome:
+    $user_id = array_distinct($e.principal.user.userid)
+    $old_key = array_distinct($e.additional.fields[""targetResources.modifiedProperties.oldValue 0""])
+    $new_key = array_distinct($e.additional.fields[""targetResources.modifiedProperties.newValue 0""])
+
+order:
+    $date
+
+limit: 25",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-01: Identities and credentials for authorized users, services, and hardware are managed by the organization",Ex3: Select a unique identifier for each device from immutable hardware characteristics or an identifier securely provisioned to the device,"CCMv4.0: CEK-01
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-09
+CCMv4.0: IAM-13
+CCMv4.0: IAM-14
+CCMv4.0: IAM-15
+CCMv4.0: IAM-16
+CCMv4.0: UEM-14
+CIS Controls v8.0: 5.1
+CIS Controls v8.0: 6.7
+CRI Profile v2.0: PR.AA-01
+CRI Profile v2.0: PR.AA-01.01
+CRI Profile v2.0: PR.AA-01.02
+CSF v1.1: PR.AC-1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-14
+SP 800-53 Rev 5.1.1: IA-01
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-04
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-06
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",Yes,Dashboard Export API,Done,"A UUID, GUID, MAC or other standard identifier should be discovered from most asset reporting log types.
+
+The pretty print query does NOT work.  However, a SecOps dashboard has been created showing the relevant information.  Theoretically, the query or something similar should work.
+
+Dashboard Name:  R28 PR.AA-01 Ex3 - Unique Identifier for Assets",FALSE,Agnostic,Beta,R28 PR.AA-01 Ex3 - Unique Identifier for Assets,"$hostname =  group($e.principal.hostname,$e.target.hostname,$e.src.hostname,$e.intermediary.hostname,$e.observer.hostname,$e.principal.asset.hostname,$e.src.asset.hostname,$e.target.asset.hostname)
+$e.about.asset.mac != """"
+
+match:
+    $hostname
+
+outcome:
+    $macAddrs = array_distinct($e.about.asset.mac)
+    $firstSeen = timestamp.get_date(min($e.metadata.event_timestamp.seconds))
+    $lastSeen = timestamp.get_date(max($e.metadata.event_timestamp.seconds))
+
+order:
+    $hostname",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-01: Identities and credentials for authorized users, services, and hardware are managed by the organization",Ex4: Physically label authorized hardware with an identifier for inventory and servicing purposes,"CCMv4.0: CEK-01
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-09
+CCMv4.0: IAM-13
+CCMv4.0: IAM-14
+CCMv4.0: IAM-15
+CCMv4.0: IAM-16
+CCMv4.0: UEM-14
+CIS Controls v8.0: 5.1
+CIS Controls v8.0: 6.7
+CRI Profile v2.0: PR.AA-01
+CRI Profile v2.0: PR.AA-01.01
+CRI Profile v2.0: PR.AA-01.02
+CSF v1.1: PR.AC-1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-14
+SP 800-53 Rev 5.1.1: IA-01
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-04
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-06
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",No,None,,This requires physical interaction with the device to label it.  No logs would be sent to a SIEM.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-03: Users, services, and hardware are authenticated",Ex1: Require multifactor authentication,"CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-02
+CCMv4.0: IAM-14
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: UEM-05
+CCMv4.0: UEM-06
+CCMv4.0: UEM-14
+CRI Profile v2.0: PR.AA-03
+CRI Profile v2.0: PR.AA-03.01
+CRI Profile v2.0: PR.AA-03.02
+CRI Profile v2.0: PR.AA-03.03
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-7
+SP 800-218: PO.5.2
+SP 800-53 Rev 5.1.1: AC-07
+SP 800-53 Rev 5.1.1: AC-12
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",Yes,UDM Search with YL2,Done,"Enforcement of MFA requirements would have to be acquired via configuration review.  However, reviewing MFA logs would provide evidence that the MFA polies are successfully in place.",FALSE,Microsoft Azure,1.0,,"$userLogin.metadata.event_type = ""USER_LOGIN"" 
+($userLogin.security_result.description = ""MFA completed in Azure AD"" OR $userLogin.security_result.description = ""MFA requirement satisfied by claim in the token"")
+$userLogin.target.user.userid = $targetUser
+
+match:
+    $targetUser
+
+outcome:
+    $LoginFromHosts = array_distinct($userLogin.principal.asset.hostname)
+    $MfaResult = array_distinct($userLogin.security_result.description)
+
+order:
+    $targetUser",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-03: Users, services, and hardware are authenticated","Ex2: Enforce policies for the minimum strength of passwords, PINs, and similar authenticators","CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-02
+CCMv4.0: IAM-14
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: UEM-05
+CCMv4.0: UEM-06
+CCMv4.0: UEM-14
+CRI Profile v2.0: PR.AA-03
+CRI Profile v2.0: PR.AA-03.01
+CRI Profile v2.0: PR.AA-03.02
+CRI Profile v2.0: PR.AA-03.03
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-7
+SP 800-218: PO.5.2
+SP 800-53 Rev 5.1.1: AC-07
+SP 800-53 Rev 5.1.1: AC-12
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",No,None,,This would have to be acquired via configuration review.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-03: Users, services, and hardware are authenticated","Ex3: Periodically reauthenticate users, services, and hardware based on risk (e.g., in zero trust architectures)","CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-02
+CCMv4.0: IAM-14
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: UEM-05
+CCMv4.0: UEM-06
+CCMv4.0: UEM-14
+CRI Profile v2.0: PR.AA-03
+CRI Profile v2.0: PR.AA-03.01
+CRI Profile v2.0: PR.AA-03.02
+CRI Profile v2.0: PR.AA-03.03
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-7
+SP 800-218: PO.5.2
+SP 800-53 Rev 5.1.1: AC-07
+SP 800-53 Rev 5.1.1: AC-12
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",Yes,UDM Search with YL2,Done,"Evidence would likely need to be acquired by configuration review.  However, it should be possible to verify that entities are reauthenticated peridiocally via the logs.
+
+Note:  Current version creates a row per user, and then has a list of all applications and the total count of ALLOW eventsf ro USER_LOGIN.  This does NOT separate each application for login count to be shown per application.",FALSE,Agnostic,1.0,,"$user = $e.target.user.userid
+$user = /.*/
+$e.metadata.event_type = ""USER_LOGIN""
+$e.security_result.action = ""ALLOW""
+
+match:
+    $user over 24h
+
+outcome:
+    $targetApplication = array_distinct($e.target.application)
+    $timesAuthenticated = count($e.target.application)
+
+limit:  100",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-03: Users, services, and hardware are authenticated",Ex4: Ensure that authorized personnel can access accounts essential for protecting safety under emergency conditions,"CCMv4.0: DCS-08
+CCMv4.0: IAM-01
+CCMv4.0: IAM-02
+CCMv4.0: IAM-14
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: UEM-05
+CCMv4.0: UEM-06
+CCMv4.0: UEM-14
+CRI Profile v2.0: PR.AA-03
+CRI Profile v2.0: PR.AA-03.01
+CRI Profile v2.0: PR.AA-03.02
+CRI Profile v2.0: PR.AA-03.03
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-7
+SP 800-218: PO.5.2
+SP 800-53 Rev 5.1.1: AC-07
+SP 800-53 Rev 5.1.1: AC-12
+SP 800-53 Rev 5.1.1: IA-02
+SP 800-53 Rev 5.1.1: IA-03
+SP 800-53 Rev 5.1.1: IA-05
+SP 800-53 Rev 5.1.1: IA-07
+SP 800-53 Rev 5.1.1: IA-08
+SP 800-53 Rev 5.1.1: IA-09
+SP 800-53 Rev 5.1.1: IA-10
+SP 800-53 Rev 5.1.1: IA-11",No,None,,"While emergency users and groups could potentially be queried for their relationships, it is more likely that a manual review would be required to complete this process.",FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-04: Identity assertions are protected, conveyed, and verified",Ex1: Protect identity assertions that are used to convey authentication and user information through single sign-on systems,"CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-16
+CRI Profile v2.0: PR.AA-04
+CRI Profile v2.0: PR.AA-04.01
+SP 800-53 Rev 5.1.1: IA-13",Yes,UDM Search with YL2,Done,"SAML assertions should be able to be discoverable by different authentication and SSO providers.  However, this is likely dependent on how well the related parser has been implemented in the SIEM.  So, it may require custom queries to discover the necessary evidence.
+
+Note:  This is Entra Active DIrectory, and relies on Entra's Conditional Access functionality.  This requires an Entra ID P1 or P2 subscription for each user for data to populate.",FALSE,Microsoft Azure,1.0,,"$user = $e.target.user.userid
+$user = /.*/
+$loginType = $e.extensions.auth.type
+$loginType = ""SSO""
+$e.additional.fields[""conditionalAccessStatus""] = ""success""
+
+match:
+    $user
+
+outcome:
+    $applications = array_distinct($e.target.application )",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-04: Identity assertions are protected, conveyed, and verified",Ex2: Protect identity assertions that are used to convey authentication and user information between federated systems,"CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-16
+CRI Profile v2.0: PR.AA-04
+CRI Profile v2.0: PR.AA-04.01
+SP 800-53 Rev 5.1.1: IA-13",Yes,UDM Search with YL2,Done,"SAML assertions should be able to provide this information in logs.  However, this will likely take in depth research to discover the necessary logs.  Additionally, it is likely this may require a custom query to discover the evidence.
+
+Note:  This has been tested with Okta, but should be usable with any SAML IdP.",FALSE,Agnostic,1.0,,"($e.target.application = /SAML/ OR 
+    $e.target.resource.name = /SAML/ OR
+    $e.extensions.auth.type = ""SSO"" OR
+    $e.metadata.product_name = /SSO/ nocase )
+
+$user_id = group($e.principal.user.userid, $e.target.user.userid)
+
+$date = timestamp.get_date($e.metadata.event_timestamp.seconds)
+
+$e.target.application != """"
+
+$e.security_result.action = ""ALLOW""
+
+match:
+    $user_id
+
+outcome:
+    $vendor = array_distinct($e.metadata.vendor_name)
+    $application = array_distinct($e.target.application)
+
+order:
+    $user_id
+
+limit: 25",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-04: Identity assertions are protected, conveyed, and verified","Ex3: Implement standards-based approaches for identity assertions in all contexts, and follow all guidance for the generation (e.g., data models, metadata), protection (e.g., digital signing, encryption), and verification (e.g., signature validation) of identity assertions","CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-16
+CRI Profile v2.0: PR.AA-04
+CRI Profile v2.0: PR.AA-04.01
+SP 800-53 Rev 5.1.1: IA-13",No,UDM Search with YL2,,This would need to be defined in the organizational policies and procedures.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-05: Access permissions, entitlements, and authorizations are defined in a policy, managed, enforced, and reviewed, and incorporate the principles of least privilege and separation of duties","Ex1: Review logical and physical access privileges periodically and whenever someone changes roles or leaves the organization, and promptly rescind privileges that are no longer needed","CCMv4.0: CCC-04
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-04
+CCMv4.0: IAM-05
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-08
+CCMv4.0: IAM-09
+CCMv4.0: IAM-10
+CCMv4.0: IAM-11
+CCMv4.0: IAM-12
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: IVS-06
+CCMv4.0: LOG-02
+CCMv4.0: LOG-04
+CCMv4.0: LOG-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.3
+CIS Controls v8.0: 6.8
+CRI Profile v2.0: PR.AA-05
+CRI Profile v2.0: PR.AA-05.01
+CRI Profile v2.0: PR.AA-05.02
+CRI Profile v2.0: PR.AA-05.03
+CRI Profile v2.0: PR.AA-05.04
+CSF v1.1: PR.AC-1
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-4
+SP 800-218: PO.5.2
+SP 800-218: PS.1.1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-05
+SP 800-53 Rev 5.1.1: AC-06
+SP 800-53 Rev 5.1.1: AC-10
+SP 800-53 Rev 5.1.1: AC-16
+SP 800-53 Rev 5.1.1: AC-17
+SP 800-53 Rev 5.1.1: AC-18
+SP 800-53 Rev 5.1.1: AC-19
+SP 800-53 Rev 5.1.1: AC-24
+SP 800-53 Rev 5.1.1: IA-13",No,None,,This would need to be performed manually by configuration reviews.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-05: Access permissions, entitlements, and authorizations are defined in a policy, managed, enforced, and reviewed, and incorporate the principles of least privilege and separation of duties","Ex2: Take attributes of the requester and the requested resource into account for authorization decisions (e.g., geolocation, day/time, requester endpoint's cyber health)","CCMv4.0: CCC-04
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-04
+CCMv4.0: IAM-05
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-08
+CCMv4.0: IAM-09
+CCMv4.0: IAM-10
+CCMv4.0: IAM-11
+CCMv4.0: IAM-12
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: IVS-06
+CCMv4.0: LOG-02
+CCMv4.0: LOG-04
+CCMv4.0: LOG-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.3
+CIS Controls v8.0: 6.8
+CRI Profile v2.0: PR.AA-05
+CRI Profile v2.0: PR.AA-05.01
+CRI Profile v2.0: PR.AA-05.02
+CRI Profile v2.0: PR.AA-05.03
+CRI Profile v2.0: PR.AA-05.04
+CSF v1.1: PR.AC-1
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-4
+SP 800-218: PO.5.2
+SP 800-218: PS.1.1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-05
+SP 800-53 Rev 5.1.1: AC-06
+SP 800-53 Rev 5.1.1: AC-10
+SP 800-53 Rev 5.1.1: AC-16
+SP 800-53 Rev 5.1.1: AC-17
+SP 800-53 Rev 5.1.1: AC-18
+SP 800-53 Rev 5.1.1: AC-19
+SP 800-53 Rev 5.1.1: AC-24
+SP 800-53 Rev 5.1.1: IA-13",Yes,UDM Search with YL2,Done,"Evidence should be available based on the type of authenication log.  For example, it would be expected to see this type of validation information in log types like Microsoft Entra Conditional Access as it tests specifically for qualifying conditions to ensure and entity may access a device or service.
+
+Note:  Query is specific to Entra ID.",FALSE,Microsoft Azure,1.0,,"$user = $e.target.user.userid
+$user = /.*/
+$e.additional.fields[""conditionalAccessStatus""] = ""success""
+
+match:
+    $user
+
+outcome:
+    $applications = array_distinct($e.target.application )
+    $country = array_distinct($e.principal.location.country_or_region)
+    $state = array_distinct($e.principal.location.state)
+    $compliant = array_distinct(if($e.principal.asset.attribute.labels[""isCompliant""] = ""true"", ""true"", ""false""))
+",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-05: Access permissions, entitlements, and authorizations are defined in a policy, managed, enforced, and reviewed, and incorporate the principles of least privilege and separation of duties","Ex3: Restrict access and privileges to the minimum necessary (e.g., zero trust architecture)","CCMv4.0: CCC-04
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-04
+CCMv4.0: IAM-05
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-08
+CCMv4.0: IAM-09
+CCMv4.0: IAM-10
+CCMv4.0: IAM-11
+CCMv4.0: IAM-12
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: IVS-06
+CCMv4.0: LOG-02
+CCMv4.0: LOG-04
+CCMv4.0: LOG-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.3
+CIS Controls v8.0: 6.8
+CRI Profile v2.0: PR.AA-05
+CRI Profile v2.0: PR.AA-05.01
+CRI Profile v2.0: PR.AA-05.02
+CRI Profile v2.0: PR.AA-05.03
+CRI Profile v2.0: PR.AA-05.04
+CSF v1.1: PR.AC-1
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-4
+SP 800-218: PO.5.2
+SP 800-218: PS.1.1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-05
+SP 800-53 Rev 5.1.1: AC-06
+SP 800-53 Rev 5.1.1: AC-10
+SP 800-53 Rev 5.1.1: AC-16
+SP 800-53 Rev 5.1.1: AC-17
+SP 800-53 Rev 5.1.1: AC-18
+SP 800-53 Rev 5.1.1: AC-19
+SP 800-53 Rev 5.1.1: AC-24
+SP 800-53 Rev 5.1.1: IA-13",No,None,,This would need to be performed via configuration review.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limited to authorized users, services, and hardware and  managed commensurate with the assessed risk of unauthorized access","PR.AA-05: Access permissions, entitlements, and authorizations are defined in a policy, managed, enforced, and reviewed, and incorporate the principles of least privilege and separation of duties",Ex4: Periodically review the privileges associated with critical business functions to confirm proper separation of duties,"CCMv4.0: CCC-04
+CCMv4.0: CEK-10
+CCMv4.0: CEK-11
+CCMv4.0: CEK-12
+CCMv4.0: CEK-13
+CCMv4.0: CEK-14
+CCMv4.0: CEK-15
+CCMv4.0: CEK-16
+CCMv4.0: CEK-17
+CCMv4.0: CEK-18
+CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: CEK-21
+CCMv4.0: IAM-01
+CCMv4.0: IAM-03
+CCMv4.0: IAM-04
+CCMv4.0: IAM-05
+CCMv4.0: IAM-06
+CCMv4.0: IAM-07
+CCMv4.0: IAM-08
+CCMv4.0: IAM-09
+CCMv4.0: IAM-10
+CCMv4.0: IAM-11
+CCMv4.0: IAM-12
+CCMv4.0: IAM-16
+CCMv4.0: IVS-03
+CCMv4.0: IVS-06
+CCMv4.0: LOG-02
+CCMv4.0: LOG-04
+CCMv4.0: LOG-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.3
+CIS Controls v8.0: 6.8
+CRI Profile v2.0: PR.AA-05
+CRI Profile v2.0: PR.AA-05.01
+CRI Profile v2.0: PR.AA-05.02
+CRI Profile v2.0: PR.AA-05.03
+CRI Profile v2.0: PR.AA-05.04
+CSF v1.1: PR.AC-1
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-4
+SP 800-218: PO.5.2
+SP 800-218: PS.1.1
+SP 800-53 Rev 5.1.1: AC-01
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-05
+SP 800-53 Rev 5.1.1: AC-06
+SP 800-53 Rev 5.1.1: AC-10
+SP 800-53 Rev 5.1.1: AC-16
+SP 800-53 Rev 5.1.1: AC-17
+SP 800-53 Rev 5.1.1: AC-18
+SP 800-53 Rev 5.1.1: AC-19
+SP 800-53 Rev 5.1.1: AC-24
+SP 800-53 Rev 5.1.1: IA-13",No,None,,This would need to be performed via configuration review.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Platform Security (PR.PS): The hardware, software (e.g., firmware, operating systems, applications), and services of physical and virtual platforms are managed consistent with the organization's risk strategy to protect their confidentiality, integrity, and availability",PR.PS-04: Log records are generated and made available for continuous monitoring,"Ex1: Configure all operating systems, applications, and services (including cloud-based services) to generate log records","CCMv4.0: IAM-16
+CCMv4.0: LOG-01
+CCMv4.0: LOG-02
+CCMv4.0: LOG-03
+CCMv4.0: LOG-04
+CCMv4.0: LOG-05
+CCMv4.0: LOG-07
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: LOG-12
+CCMv4.0: LOG-13
+CIS Controls v8.0: 8.2
+CRI Profile v2.0: PR.PS-04
+CRI Profile v2.0: PR.PS-04.01
+CRI Profile v2.0: PR.PS-04.02
+CRI Profile v2.0: PR.PS-04.03
+CSF v1.1: PR.PT-1
+SP 800-218: PO.3.3
+SP 800-53 Rev 5.1.1: AU-02
+SP 800-53 Rev 5.1.1: AU-03
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: AU-07
+SP 800-53 Rev 5.1.1: AU-11
+SP 800-53 Rev 5.1.1: AU-12",Yes,UDM Search with YL2,Done,"Each device and the corresponding logs can be listed for reviewing against a standard inventory.  Similarly, all cloud service logs will be listed as well.  Comparison afterwards may require manual review as a spreadsheet.  
+
+Note:  This needs to be tested against a source that has NXLog sending multiple log types.",FALSE,Agnostic,1.0,,"$host = $e.principal.hostname 
+$host = /.*/
+
+match:
+    $host
+
+outcome:
+    $logtypes = array_distinct($e.metadata.log_type)",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Platform Security (PR.PS): The hardware, software (e.g., firmware, operating systems, applications), and services of physical and virtual platforms are managed consistent with the organization's risk strategy to protect their confidentiality, integrity, and availability",PR.PS-04: Log records are generated and made available for continuous monitoring,Ex2: Configure log generators to securely share their logs with the organization's logging infrastructure systems and services,"CCMv4.0: IAM-16
+CCMv4.0: LOG-01
+CCMv4.0: LOG-02
+CCMv4.0: LOG-03
+CCMv4.0: LOG-04
+CCMv4.0: LOG-05
+CCMv4.0: LOG-07
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: LOG-12
+CCMv4.0: LOG-13
+CIS Controls v8.0: 8.2
+CRI Profile v2.0: PR.PS-04
+CRI Profile v2.0: PR.PS-04.01
+CRI Profile v2.0: PR.PS-04.02
+CRI Profile v2.0: PR.PS-04.03
+CSF v1.1: PR.PT-1
+SP 800-218: PO.3.3
+SP 800-53 Rev 5.1.1: AU-02
+SP 800-53 Rev 5.1.1: AU-03
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: AU-07
+SP 800-53 Rev 5.1.1: AU-11
+SP 800-53 Rev 5.1.1: AU-12",No,None,,"This will need to be performed via configuration review in most cases.  For example, if syslog is being sent to a SIEM Forwarder, it would be need to be confirmed on a configuration level on the Forwarder as to whether the log was sent with TLS encryption.  If it wasn't sent with TLS, were the firewall rules enabling sending syslog to the Forwarder ensuring that transmission was over a secure and controlled network.",FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Platform Security (PR.PS): The hardware, software (e.g., firmware, operating systems, applications), and services of physical and virtual platforms are managed consistent with the organization's risk strategy to protect their confidentiality, integrity, and availability",PR.PS-04: Log records are generated and made available for continuous monitoring,Ex3: Configure log generators to record the data needed by zero-trust architectures,"CCMv4.0: IAM-16
+CCMv4.0: LOG-01
+CCMv4.0: LOG-02
+CCMv4.0: LOG-03
+CCMv4.0: LOG-04
+CCMv4.0: LOG-05
+CCMv4.0: LOG-07
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: LOG-12
+CCMv4.0: LOG-13
+CIS Controls v8.0: 8.2
+CRI Profile v2.0: PR.PS-04
+CRI Profile v2.0: PR.PS-04.01
+CRI Profile v2.0: PR.PS-04.02
+CRI Profile v2.0: PR.PS-04.03
+CSF v1.1: PR.PT-1
+SP 800-218: PO.3.3
+SP 800-53 Rev 5.1.1: AU-02
+SP 800-53 Rev 5.1.1: AU-03
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: AU-07
+SP 800-53 Rev 5.1.1: AU-11
+SP 800-53 Rev 5.1.1: AU-12",Yes,None,,"Log evidence could be used to satisfy the requirement.  However, it would need to be a custom query based on the provider of the zero-trust technology.  The description ""zero-trust architecture"" is unfortunately too ambiguous as many different companies use it to describe many different approaches to infrastructure or user security.",FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Platform Security (PR.PS): The hardware, software (e.g., firmware, operating systems, applications), and services of physical and virtual platforms are managed consistent with the organization's risk strategy to protect their confidentiality, integrity, and availability","PR.PS-06: Secure software development practices are integrated, and their performance is monitored throughout the software development life cycle",Ex1: Protect all components of organization-developed software from tampering and unauthorized access,"CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: AIS-07
+CCMv4.0: DSP-07
+CCMv4.0: IVS-06
+CIS Controls v8.0: 16.1
+CRI Profile v2.0: PR.PS-06
+CRI Profile v2.0: PR.PS-06.01
+CRI Profile v2.0: PR.PS-06.02
+CRI Profile v2.0: PR.PS-06.03
+CRI Profile v2.0: PR.PS-06.04
+CRI Profile v2.0: PR.PS-06.05
+CRI Profile v2.0: PR.PS-06.06
+CRI Profile v2.0: PR.PS-06.07
+CRI Profile v2.0: PR.PS-06.08
+CRI Profile v2.0: PR.PS-06.09
+CRI Profile v2.0: PR.PS-06.10
+CSF v1.1: PR.IP-2
+SP 800-53 Rev 5.1.1: SA-03
+SP 800-53 Rev 5.1.1: SA-08
+SP 800-53 Rev 5.1.1: SA-10
+SP 800-53 Rev 5.1.1: SA-11
+SP 800-53 Rev 5.1.1: SA-15
+SP 800-53 Rev 5.1.1: SA-17",No,None,,This would need to performed via configuration review.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Platform Security (PR.PS): The hardware, software (e.g., firmware, operating systems, applications), and services of physical and virtual platforms are managed consistent with the organization's risk strategy to protect their confidentiality, integrity, and availability","PR.PS-06: Secure software development practices are integrated, and their performance is monitored throughout the software development life cycle","Ex2: Secure all software produced by the organization, with minimal vulnerabilities in their releases","CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: AIS-07
+CCMv4.0: DSP-07
+CCMv4.0: IVS-06
+CIS Controls v8.0: 16.1
+CRI Profile v2.0: PR.PS-06
+CRI Profile v2.0: PR.PS-06.01
+CRI Profile v2.0: PR.PS-06.02
+CRI Profile v2.0: PR.PS-06.03
+CRI Profile v2.0: PR.PS-06.04
+CRI Profile v2.0: PR.PS-06.05
+CRI Profile v2.0: PR.PS-06.06
+CRI Profile v2.0: PR.PS-06.07
+CRI Profile v2.0: PR.PS-06.08
+CRI Profile v2.0: PR.PS-06.09
+CRI Profile v2.0: PR.PS-06.10
+CSF v1.1: PR.IP-2
+SP 800-53 Rev 5.1.1: SA-03
+SP 800-53 Rev 5.1.1: SA-08
+SP 800-53 Rev 5.1.1: SA-10
+SP 800-53 Rev 5.1.1: SA-11
+SP 800-53 Rev 5.1.1: SA-15
+SP 800-53 Rev 5.1.1: SA-17",No,None,,"This could potentially be demonstrated sending vulnerability scanning logs from a SAST/DAST technology.  However, this would likely require substantial research.  Additionally, this is a policy question as ""minimal vulnerabilities in their releases"" is  subjective.",FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Platform Security (PR.PS): The hardware, software (e.g., firmware, operating systems, applications), and services of physical and virtual platforms are managed consistent with the organization's risk strategy to protect their confidentiality, integrity, and availability","PR.PS-06: Secure software development practices are integrated, and their performance is monitored throughout the software development life cycle","Ex3: Maintain the software used in production environments, and securely dispose of software once it is no longer needed","CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: AIS-07
+CCMv4.0: DSP-07
+CCMv4.0: IVS-06
+CIS Controls v8.0: 16.1
+CRI Profile v2.0: PR.PS-06
+CRI Profile v2.0: PR.PS-06.01
+CRI Profile v2.0: PR.PS-06.02
+CRI Profile v2.0: PR.PS-06.03
+CRI Profile v2.0: PR.PS-06.04
+CRI Profile v2.0: PR.PS-06.05
+CRI Profile v2.0: PR.PS-06.06
+CRI Profile v2.0: PR.PS-06.07
+CRI Profile v2.0: PR.PS-06.08
+CRI Profile v2.0: PR.PS-06.09
+CRI Profile v2.0: PR.PS-06.10
+CSF v1.1: PR.IP-2
+SP 800-53 Rev 5.1.1: SA-03
+SP 800-53 Rev 5.1.1: SA-08
+SP 800-53 Rev 5.1.1: SA-10
+SP 800-53 Rev 5.1.1: SA-11
+SP 800-53 Rev 5.1.1: SA-15
+SP 800-53 Rev 5.1.1: SA-17",No,None,,This would need to covered via policies and prodecures.  Operational logs (potentially tickets or custom logs) would need to be generated to prove fullment of Ex3.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Technology Infrastructure Resilience (PR.IR): Security architectures are managed with the organization's risk strategy to protect asset confidentiality, integrity, and availability, and organizational resilience",PR.IR-01: Networks and environments are protected from unauthorized logical access and usage,"Ex1: Logically segment organization networks and cloud-based platforms according to trust boundaries and platform types (e.g., IT, IoT, OT, mobile, guests), and permit required communications only between segments","CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: DCS-12
+CCMv4.0: DSP-10
+CCMv4.0: DSP-15
+CCMv4.0: IVS-03
+CCMv4.0: IVS-05
+CCMv4.0: IVS-06
+CCMv4.0: IVS-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.12
+CIS Controls v8.0: 12.2
+CRI Profile v2.0: PR.IR-01
+CRI Profile v2.0: PR.IR-01.01
+CRI Profile v2.0: PR.IR-01.02
+CRI Profile v2.0: PR.IR-01.03
+CRI Profile v2.0: PR.IR-01.04
+CRI Profile v2.0: PR.IR-01.05
+CRI Profile v2.0: PR.IR-01.06
+CRI Profile v2.0: PR.IR-01.07
+CRI Profile v2.0: PR.IR-01.08
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-5
+CSF v1.1: PR.DS-7
+CSF v1.1: PR.PT-4
+SP 800-218: PO.5.1
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: SC-04
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07",Yes,UDM Search with YL2,Done,"Firewall, netflow, and other communications between internal subnets can be demonstrated via log analysis.  However, this Example also demonstrates the need to show that only permitted communication is allowed.  This can only be done by configuration review.
+
+Note:  This rule checks to see if data is routed through a firewall.  In order for it to work, a reference list called firewall_log_types must be created.  This was tested against a list with the following firewall log types in the list:
+PAN_FIREWALL
+PAN_PANORAMA
+AWS_NETWORK_FIREWALL
+AZURE_FIREWALL
+BARRACUDA_FIREWALL
+CHECKPOINT_FIREWALL
+CISCO_ASA_FIREWALL
+CISCO_FIREPOWER_FIREWALL
+FORCEPOINT_FIREWALL
+FORTINET_FIREWALL
+PFSENSE
+RADWARE_FIREWALL
+SONIC_FIREWALL
+SOPHOS_FIREWALL
+ZSCALER_FIREWALL",FALSE,Agnostic,1.0,,"$e.metadata.log_type IN %firewall_log_types 
+$sourceIP = $e.principal.ip
+
+$e.principal.ip IN cidr %private_network_IP_ranges 
+$e.target.ip in cidr %private_network_IP_ranges 
+
+$e.security_result.action = ""ALLOW""
+
+match:
+    $sourceIP
+
+outcome:
+    $destinationIP = array_distinct($e.target.ip)",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Technology Infrastructure Resilience (PR.IR): Security architectures are managed with the organization's risk strategy to protect asset confidentiality, integrity, and availability, and organizational resilience",PR.IR-01: Networks and environments are protected from unauthorized logical access and usage,"Ex2: Logically segment organization networks from external networks, and permit only necessary communications to enter the organization's networks from the external networks","CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: DCS-12
+CCMv4.0: DSP-10
+CCMv4.0: DSP-15
+CCMv4.0: IVS-03
+CCMv4.0: IVS-05
+CCMv4.0: IVS-06
+CCMv4.0: IVS-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.12
+CIS Controls v8.0: 12.2
+CRI Profile v2.0: PR.IR-01
+CRI Profile v2.0: PR.IR-01.01
+CRI Profile v2.0: PR.IR-01.02
+CRI Profile v2.0: PR.IR-01.03
+CRI Profile v2.0: PR.IR-01.04
+CRI Profile v2.0: PR.IR-01.05
+CRI Profile v2.0: PR.IR-01.06
+CRI Profile v2.0: PR.IR-01.07
+CRI Profile v2.0: PR.IR-01.08
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-5
+CSF v1.1: PR.DS-7
+CSF v1.1: PR.PT-4
+SP 800-218: PO.5.1
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: SC-04
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07",Yes,UDM Search with YL2,Done,"Like in PR.IR-1 Ex1, firewall, netflow, and other communications between internal subnets can be demonstrated via log analysis.  However, this Example also demonstrates the need to show that only permitted communication is allowed.  This can only be done by configuration review.",PR.IR-01 Ex1,Agnostic,1.0,,"$e.metadata.log_type IN %firewall_log_types 
+$sourceIP = $e.principal.ip
+
+$e.principal.ip IN cidr %private_network_IP_ranges 
+$e.target.ip in cidr %private_network_IP_ranges 
+
+$e.security_result.action = ""ALLOW""
+
+match:
+    $sourceIP
+
+outcome:
+    $destinationIP = array_distinct($e.target.ip)",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Technology Infrastructure Resilience (PR.IR): Security architectures are managed with the organization's risk strategy to protect asset confidentiality, integrity, and availability, and organizational resilience",PR.IR-01: Networks and environments are protected from unauthorized logical access and usage,Ex3: Implement zero trust architectures to restrict network access to each resource to the minimum necessary,"CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: DCS-12
+CCMv4.0: DSP-10
+CCMv4.0: DSP-15
+CCMv4.0: IVS-03
+CCMv4.0: IVS-05
+CCMv4.0: IVS-06
+CCMv4.0: IVS-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.12
+CIS Controls v8.0: 12.2
+CRI Profile v2.0: PR.IR-01
+CRI Profile v2.0: PR.IR-01.01
+CRI Profile v2.0: PR.IR-01.02
+CRI Profile v2.0: PR.IR-01.03
+CRI Profile v2.0: PR.IR-01.04
+CRI Profile v2.0: PR.IR-01.05
+CRI Profile v2.0: PR.IR-01.06
+CRI Profile v2.0: PR.IR-01.07
+CRI Profile v2.0: PR.IR-01.08
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-5
+CSF v1.1: PR.DS-7
+CSF v1.1: PR.PT-4
+SP 800-218: PO.5.1
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: SC-04
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07",No,None,,This would need to performed via configuration review.,FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Technology Infrastructure Resilience (PR.IR): Security architectures are managed with the organization's risk strategy to protect asset confidentiality, integrity, and availability, and organizational resilience",PR.IR-01: Networks and environments are protected from unauthorized logical access and usage,Ex4: Check the cyber health of endpoints before allowing them to access and use production resources,"CCMv4.0: AIS-04
+CCMv4.0: AIS-06
+CCMv4.0: DCS-12
+CCMv4.0: DSP-10
+CCMv4.0: DSP-15
+CCMv4.0: IVS-03
+CCMv4.0: IVS-05
+CCMv4.0: IVS-06
+CCMv4.0: IVS-09
+CCMv4.0: UEM-05
+CCMv4.0: UEM-14
+CIS Controls v8.0: 3.12
+CIS Controls v8.0: 12.2
+CRI Profile v2.0: PR.IR-01
+CRI Profile v2.0: PR.IR-01.01
+CRI Profile v2.0: PR.IR-01.02
+CRI Profile v2.0: PR.IR-01.03
+CRI Profile v2.0: PR.IR-01.04
+CRI Profile v2.0: PR.IR-01.05
+CRI Profile v2.0: PR.IR-01.06
+CRI Profile v2.0: PR.IR-01.07
+CRI Profile v2.0: PR.IR-01.08
+CSF v1.1: PR.AC-3
+CSF v1.1: PR.AC-5
+CSF v1.1: PR.DS-7
+CSF v1.1: PR.PT-4
+SP 800-218: PO.5.1
+SP 800-53 Rev 5.1.1: AC-03
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: SC-04
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07",Yes,UDM Search with YL2,Done,"This requirement is very similar to PR.AA-05 Ex2, may be able to be satisfied by evidence from that Subcategory/Example.  As such, the description is duplicated here, and this is shown as a linked query.  Should there be other queries that are more specific, they will listed.  In either case, it is recommended to used the evidence from the linked query in addition to any support queries listed here.
+
+Description for PR.AA-05 Ex2:  Evidence should be available based on the type of authenication log.  For example, it would be expected to see this type of validation information in log types like Microsoft Entra Conditional Access as it tests specifically for qualifying conditions to ensure and entity may access a device or service.",PR.AA-05 Ex2,Microsoft Azure,1.0,,"$user = $e.target.user.userid
+$user = /.*/
+$e.additional.fields[""conditionalAccessStatus""] = ""success""
+
+match:
+    $user
+
+outcome:
+    $applications = array_distinct($e.target.application )
+    $country = array_distinct($e.principal.location.country_or_region)
+    $state = array_distinct($e.principal.location.state)
+    $compliant = array_distinct(if($e.principal.asset.attribute.labels[""isCompliant""] = ""true"", ""true"", ""false""))
+",
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Technology Infrastructure Resilience (PR.IR): Security architectures are managed with the organization's risk strategy to protect asset confidentiality, integrity, and availability, and organizational resilience",PR.IR-04: Adequate resource capacity to ensure availability is maintained,"Ex1: Monitor usage of storage, power, compute, network bandwidth, and other resources","CCMv4.0: IVS-02
+CRI Profile v2.0: PR.IR-04
+CRI Profile v2.0: PR.IR-04.01
+CRI Profile v2.0: PR.IR-04.02
+CSF v1.1: PR.DS-4
+SP 800-53 Rev 5.1.1: CP-06
+SP 800-53 Rev 5.1.1: CP-07
+SP 800-53 Rev 5.1.1: CP-08
+SP 800-53 Rev 5.1.1: PM-03
+SP 800-53 Rev 5.1.1: PM-09",No,None,,"While usage may be imported into a SIEM, best practices for SIEM data ingestion recommends against importing operational logs.  Instead, only security relevant logs should be ingested.",FALSE,,,,,
+PROTECT (PR): Safeguards to manage the organization's cybersecurity risks are used,"Technology Infrastructure Resilience (PR.IR): Security architectures are managed with the organization's risk strategy to protect asset confidentiality, integrity, and availability, and organizational resilience",PR.IR-04: Adequate resource capacity to ensure availability is maintained,"Ex2: Forecast future needs, and scale resources accordingly","CCMv4.0: IVS-02
+CRI Profile v2.0: PR.IR-04
+CRI Profile v2.0: PR.IR-04.01
+CRI Profile v2.0: PR.IR-04.02
+CSF v1.1: PR.DS-4
+SP 800-53 Rev 5.1.1: CP-06
+SP 800-53 Rev 5.1.1: CP-07
+SP 800-53 Rev 5.1.1: CP-08
+SP 800-53 Rev 5.1.1: PM-03
+SP 800-53 Rev 5.1.1: PM-09",Yes,Dashboard Export API ,Done,"Log ingestion should be monitored for all log ingestion types.  This will enable security departments to forecast future budgetary needs for data ingestion.  Additionally, a drop off in events or a increase in events can indicate log sources dropping off or additional resources being added to the environment, respectively.  Both cases should be investigated to ensure it is expected.
+
+Dashboard:  R52 PR.IR-04 Ex2 - Forecast Future Needs",FALSE,Agnostic,1.0,R52 PR.IR-04 Ex2 - Forecast Future Needs,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-01: Networks and network services are monitored to find potentially adverse events,"Ex1: Monitor DNS, BGP, and other network services for adverse events","CCMv4.0: IVS-03
+CCMv4.0: IVS-09
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-10
+CIS Controls v8.0: 13.1
+CRI Profile v2.0: DE.CM-01
+CRI Profile v2.0: DE.CM-01.01
+CRI Profile v2.0: DE.CM-01.02
+CRI Profile v2.0: DE.CM-01.03
+CRI Profile v2.0: DE.CM-01.04
+CRI Profile v2.0: DE.CM-01.05
+CRI Profile v2.0: DE.CM-01.06
+CSF v1.1: DE.CM-1
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07
+SP 800-53 Rev 5.1.1: SI-04",Yes,Dashboard Export API,In progress,"DNS, BGP, and other network events should be ingested into the SIEM for security event analysis and correlation.  
+
+The associated query demonstrates that DNS  events are being ingested into the SIEM.  Other network services could use a similar query, but would require it to be custom created.
+
+Dashboard:  R53 DE.CM-01 Ex1 - Monitor Network Services",FALSE,Agnostic,1.0,R53 DE.CM-01 Ex1 - Monitor Network Services,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-01: Networks and network services are monitored to find potentially adverse events,Ex2: Monitor wired and wireless networks for connections from unauthorized endpoints,"CCMv4.0: IVS-03
+CCMv4.0: IVS-09
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-10
+CIS Controls v8.0: 13.1
+CRI Profile v2.0: DE.CM-01
+CRI Profile v2.0: DE.CM-01.01
+CRI Profile v2.0: DE.CM-01.02
+CRI Profile v2.0: DE.CM-01.03
+CRI Profile v2.0: DE.CM-01.04
+CRI Profile v2.0: DE.CM-01.05
+CRI Profile v2.0: DE.CM-01.06
+CSF v1.1: DE.CM-1
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,Unverified,"By ingesting wired network logs and wireless network logs it is possible to discern these types of events.  However, it is likely these events are vendor specific, and likely not translated to specific UDM fields.  This would require research and custom queries to be successful.
+
+Note:  This is a Cisco Meraki specific query. This query is based on the elements in the SecOps parser for authorization.  However, as Meraki also makes firewalls, this could also find firewall events (not just wired or wireless) events that resulted in blocked action.  
+
+While syntactically correct, this query has not been tested.  This would need to be tested against a Meraki switch/wifi infrastructure.",FALSE,Cisco Meraki,Alpha,,"$hostname = $e.principal.hostname
+$hostname = /.*/
+$hostname != """"
+
+$e.metadata.log_type = ""CISCO_MERAKI""
+$e.security_result.action = ""BLOCK""
+
+match:
+    $hostname
+
+outcome:
+    $block_count = count($e.metadata.id)
+
+order:
+    $hostname",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-01: Networks and network services are monitored to find potentially adverse events,Ex3: Monitor facilities for unauthorized or rogue wireless networks,"CCMv4.0: IVS-03
+CCMv4.0: IVS-09
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-10
+CIS Controls v8.0: 13.1
+CRI Profile v2.0: DE.CM-01
+CRI Profile v2.0: DE.CM-01.01
+CRI Profile v2.0: DE.CM-01.02
+CRI Profile v2.0: DE.CM-01.03
+CRI Profile v2.0: DE.CM-01.04
+CRI Profile v2.0: DE.CM-01.05
+CRI Profile v2.0: DE.CM-01.06
+CSF v1.1: DE.CM-1
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,Done,"By ingesting wireless network logs it is possible to discern these types of events.  However, it is likely these events are vendor specific, and likely not translated to specific UDM fields.  This would require research and custom queries to be successful.
+
+This is a Cisco Meraki specific query.
+
+The current query lists the full security_result.description.  Theoretically, re.capture should enable the ability to get rid of everything except the actual SSID.  However, it ends up leaving the SSID column blank with only the event type listed.
+
+Here is the re.capture that should be in the place of line 1:  $ssid = re.capture($e.security_result.description, /.*ssid: (.*)/)
+
+NOTE:  BE SURE TO GET RID OF ""CONTAINING_DEVICE"" IN THE FINAL VERSION OF THE QUERY.",FALSE,Cisco Meraki,Beta,,"$ssid = $e.security_result.description
+
+$e.metadata.log_type = ""CISCO_MERAKI""
+$e.metadata.product_event_type = ""airmarshal_events""
+$e.security_result.summary = /rogue_ssid_detected|containing_device|ssid_spoofing_detected/
+
+match:
+    $ssid
+
+outcome:
+    $violation_type = array_distinct($e.security_result.summary)
+    $last_seen = timestamp.get_date(max($e.metadata.event_timestamp.seconds))",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-01: Networks and network services are monitored to find potentially adverse events,Ex4: Compare actual network flows against baselines to detect deviations,"CCMv4.0: IVS-03
+CCMv4.0: IVS-09
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-10
+CIS Controls v8.0: 13.1
+CRI Profile v2.0: DE.CM-01
+CRI Profile v2.0: DE.CM-01.01
+CRI Profile v2.0: DE.CM-01.02
+CRI Profile v2.0: DE.CM-01.03
+CRI Profile v2.0: DE.CM-01.04
+CRI Profile v2.0: DE.CM-01.05
+CRI Profile v2.0: DE.CM-01.06
+CSF v1.1: DE.CM-1
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07
+SP 800-53 Rev 5.1.1: SI-04",Yes,Dashboard Export API,In progress,"The most common way this is performed is by ingesting Netflow for on premise networks.  However, it can also be obtained via VPC flow logs.  Log analysis would be rudimentary, but is expected in the future Google SecOps will have machine learning capabilities for flow analysis.
+
+Dashboard:  R56 DE.CM-01 Ex4 - Sent Bytes over Time
+
+Note:  Can't get Looker to display both sent and received bytes at the same time.",FALSE,Agnostic,Beta,R56 DE.CM-01 Ex4 - Sent Bytes over Time,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-01: Networks and network services are monitored to find potentially adverse events,Ex5: Monitor network communications to identify changes in security postures for zero trust purposes,"CCMv4.0: IVS-03
+CCMv4.0: IVS-09
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-10
+CIS Controls v8.0: 13.1
+CRI Profile v2.0: DE.CM-01
+CRI Profile v2.0: DE.CM-01.01
+CRI Profile v2.0: DE.CM-01.02
+CRI Profile v2.0: DE.CM-01.03
+CRI Profile v2.0: DE.CM-01.04
+CRI Profile v2.0: DE.CM-01.05
+CRI Profile v2.0: DE.CM-01.06
+CSF v1.1: DE.CM-1
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: SC-05
+SP 800-53 Rev 5.1.1: SC-07
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,Done,This would require creating custom queries for the specific zero trust vendor to identify specific properties that may have changed.,FALSE,CustomRequired,None,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-03: Personnel activity and technology usage are monitored to find potentially adverse events,Ex1: Use behavior analytics software to detect anomalous user activity to mitigate insider threats,"CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-10
+CIS Controls v8.0: 10.7
+CRI Profile v2.0: DE.CM-03
+CRI Profile v2.0: DE.CM-03.01
+CRI Profile v2.0: DE.CM-03.02
+CRI Profile v2.0: DE.CM-03.03
+CSF v1.1: DE.CM-3
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: AU-13
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11",Yes,Unknown,,"It is possible to create alerts on behavior analytics and UEBA, it would require further research to determine the correct API and quiries to retreive such data.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-03: Personnel activity and technology usage are monitored to find potentially adverse events,Ex2: Monitor logs from logical access control systems to find unusual access patterns and failed access attempts,"CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-10
+CIS Controls v8.0: 10.7
+CRI Profile v2.0: DE.CM-03
+CRI Profile v2.0: DE.CM-03.01
+CRI Profile v2.0: DE.CM-03.02
+CRI Profile v2.0: DE.CM-03.03
+CSF v1.1: DE.CM-3
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: AU-13
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11",Yes,UDM Search with YL2,Done,"This can be determined via failed logins to specific resources.   However, this is a very general Example, and could apply to many different types of resources.  For example:  access attempts to a shared drive, access attempts to a shared folder or file, access to RDP, access to SSH, and many other things.  
+
+Note:   The following rule is a modified version of the Google Curated set of rules for detection to support aggregate queries.  Quer from Google:   multiple_authentication_failures_for_single_user",FALSE,Agnostic,1.0,,"$e.metadata.event_type = ""USER_LOGIN""
+$e.security_result.action = ""BLOCK""
+$e.principal.hostname != """"
+$e.principal.ip = $ip
+$e.target.user.userid != """"
+$e.target.user.userid = $target_user
+$e.target.user.userid != ""Not Available"" 
+$e.extensions.auth.mechanism != ""OTP"" and $e.target.user.user_authentication_status != ""SUSPENDED"" and $e.target.user.user_authentication_status != ""NO_ACTIVE_CREDENTIALS""
+not (re.regex($e.target.user.userid, `.*\$`))
+not $e.security_result.description in %whitelisted_login_failure_reason_codes //This is to eliminate noise cases like user login attempt with expired login credentials, user is presented MFA, username does not exist.
+        
+match:
+    $target_user over 1h
+
+outcome:
+    $hostname = array_distinct($e.principal.hostname)
+    $ip_address = array_distinct($ip)
+    $anomalous = if(sum(if($e.security_result.action = ""BLOCK"", 1, 0))>50, ""Yes"", ""No"")
+    $anomalous_count = sum(if($e.security_result.action = ""BLOCK"", 1, 0))
+
+order:
+    $anomalous_count desc",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-03: Personnel activity and technology usage are monitored to find potentially adverse events,"Ex3: Continuously monitor deception technology, including user accounts, for any usage","CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-10
+CIS Controls v8.0: 10.7
+CRI Profile v2.0: DE.CM-03
+CRI Profile v2.0: DE.CM-03.01
+CRI Profile v2.0: DE.CM-03.02
+CRI Profile v2.0: DE.CM-03.03
+CSF v1.1: DE.CM-3
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-02
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: AU-13
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11",Yes,UDM Search with YL2,Done,"Deception technologies are vendor specific and require specific queries.  The most common deception technology is Thinkst Canary.
+
+A subscription to Thinkst is required, but unavailable for a UDM.  ",FALSE,CustomRequired,None,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-06: External service provider activities and services are monitored to find potentially adverse events,Ex1: Monitor remote and onsite administration and maintenance activities that external providers perform on organizational systems,"CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-10
+CIS Controls v8.0: 15.2
+CIS Controls v8.0: 15.6
+CRI Profile v2.0: DE.CM-06
+CRI Profile v2.0: DE.CM-06.01
+CRI Profile v2.0: DE.CM-06.02
+CSF v1.1: DE.CM-6
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: PS-07
+SP 800-53 Rev 5.1.1: SA-04
+SP 800-53 Rev 5.1.1: SA-09
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,Done,"This query could be pulled from any type of query that demonstrates adverse indicators of compromise on a system.  For example, a lolbins (living off the land binary) action that is potentially malicious.
+
+This query specifically is looking for a high number of authentication failures in a namespace.  
+
+Note:  It is required that the on premise assets use a namespace that is different from the cloud assets.  The namespaces for the on premise assets much be in a list named ""on_premise_namespaces""",FALSE,Agnostic,1.0,,"$my_namespace = group($e.target.namespace, $e.principal.namespace)
+$my_namespace in %on_premise_namespaces 
+
+$e.metadata.event_type = ""USER_LOGIN""
+$e.security_result.action = ""BLOCK""
+$e.principal.ip = $ip
+$e.target.user.userid != """"
+$e.target.hostname != """"
+$e.target.user.userid = $target_user
+$e.target.user.userid != ""Not Available"" 
+$e.extensions.auth.mechanism != ""OTP"" and $e.target.user.user_authentication_status != ""SUSPENDED"" and $e.target.user.user_authentication_status != ""NO_ACTIVE_CREDENTIALS""
+not (re.regex($e.target.user.userid, `.*\$`))
+not $e.security_result.description in %whitelisted_login_failure_reason_codes //This is to eliminate noise cases like user login attempt with expired login credentials, user is presented MFA, username does not exist.
+        
+match:
+    $target_user over 1h
+
+outcome:
+    $product = array_distinct($e.metadata.product_name)
+    $target_hostname = array_distinct($e.target.hostname)
+    $ip_address = array_distinct($ip)
+    $anomalous = if(sum(if($e.security_result.action = ""BLOCK"", 1, 0))>2, ""Yes"", ""No"")
+    $anomalous_count = sum(if($e.security_result.action = ""BLOCK"", 1, 0))
+    $first_seen = timestamp.get_date(min($e.metadata.event_timestamp.seconds))
+    $last_seen = timestamp.get_date(max($e.metadata.event_timestamp.seconds))
+
+order:
+    $anomalous_count desc
+
+limit:
+    100",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events",DE.CM-06: External service provider activities and services are monitored to find potentially adverse events,"Ex2: Monitor activity from cloud-based services, internet service providers, and other service providers for deviations from expected behavior","CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: TVM-10
+CIS Controls v8.0: 15.2
+CIS Controls v8.0: 15.6
+CRI Profile v2.0: DE.CM-06
+CRI Profile v2.0: DE.CM-06.01
+CRI Profile v2.0: DE.CM-06.02
+CSF v1.1: DE.CM-6
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: PS-07
+SP 800-53 Rev 5.1.1: SA-04
+SP 800-53 Rev 5.1.1: SA-09
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,Done,"This could be any query that demonostrates that the SIEM will create alerts for indicators of compromise from cloud provider logs.
+
+The following shows anomalously high number of failed logins within a single hour.  More than 2 failed attempts is considered high.
+
+The following query should work on AWS, Azure, Office365, or Google.  However, it has only been tested with Azure.",FALSE,Agnostic,1.0,,"($e.about.asset.attribute.cloud.environment = ""AMAZON_WEB_SERVICES"" or
+    $e.about.asset.attribute.cloud.environment = ""GOOGLE_CLOUD_PLATFORM"" or
+    $e.about.asset.attribute.cloud.environment = ""MICROSOFT_AZURE"" or
+    $e.about.asset.attribute.cloud.environment = ""UNSPECIFIED_CLOUD_ENVIRONMENT"")
+
+$e.metadata.event_type = ""USER_LOGIN""
+$e.security_result.action = ""BLOCK""
+$e.principal.ip = $ip
+$e.target.user.userid != """"
+$e.target.hostname != """"
+$e.target.user.userid = $target_user
+$e.target.user.userid != ""Not Available"" 
+$e.extensions.auth.mechanism != ""OTP"" and $e.target.user.user_authentication_status != ""SUSPENDED"" and $e.target.user.user_authentication_status != ""NO_ACTIVE_CREDENTIALS""
+not (re.regex($e.target.user.userid, `.*\$`))
+not $e.security_result.description in %whitelisted_login_failure_reason_codes //This is to eliminate noise cases like user login attempt with expired login credentials, user is presented MFA, username does not exist.
+        
+match:
+    $target_user over 1h
+
+outcome:
+    $product = array_distinct($e.metadata.product_name)
+    $target_hostname = array_distinct($e.target.hostname)
+    $ip_address = array_distinct($ip)
+    $anomalous = if(sum(if($e.security_result.action = ""BLOCK"", 1, 0))>2, ""Yes"", ""No"")
+    $anomalous_count = sum(if($e.security_result.action = ""BLOCK"", 1, 0))
+    $first_seen = timestamp.get_date(min($e.metadata.event_timestamp.seconds))
+    $last_seen = timestamp.get_date(max($e.metadata.event_timestamp.seconds))
+
+order:
+    $anomalous_count desc
+
+limit:
+    100",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events","DE.CM-09: Computing hardware and software, runtime environments, and their data are monitored to find potentially adverse events","Ex1: Monitor email, web, file sharing, collaboration services, and other common attack vectors to detect malware, phishing, data leaks and exfiltration, and other adverse events","CCMv4.0: CCC-07
+CCMv4.0: IVS-06
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-09
+CCMv4.0: UEM-10
+CCMv4.0: UEM-11
+CIS Controls v8.0: 10.1
+CRI Profile v2.0: DE.CM-09
+CRI Profile v2.0: DE.CM-09.01
+CRI Profile v2.0: DE.CM-09.02
+CRI Profile v2.0: DE.CM-09.03
+CSF v1.1: PR.DS-6
+CSF v1.1: PR.DS-8
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: AC-09
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: CM-06
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11
+SP 800-53 Rev 5.1.1: SC-34
+SP 800-53 Rev 5.1.1: SC-35
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-07",Yes,Chronicle API Needs Research,,"This query would involve pulling an alerts for something like Office365 Sharepoint activity when a malicious file is detected.  Similarly, the query could be based on Office365 phishing alerts.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events","DE.CM-09: Computing hardware and software, runtime environments, and their data are monitored to find potentially adverse events",Ex2: Monitor authentication attempts to identify attacks against credentials and unauthorized credential reuse,"CCMv4.0: CCC-07
+CCMv4.0: IVS-06
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-09
+CCMv4.0: UEM-10
+CCMv4.0: UEM-11
+CIS Controls v8.0: 10.1
+CRI Profile v2.0: DE.CM-09
+CRI Profile v2.0: DE.CM-09.01
+CRI Profile v2.0: DE.CM-09.02
+CRI Profile v2.0: DE.CM-09.03
+CSF v1.1: PR.DS-6
+CSF v1.1: PR.DS-8
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: AC-09
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: CM-06
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11
+SP 800-53 Rev 5.1.1: SC-34
+SP 800-53 Rev 5.1.1: SC-35
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-07",Yes,Chronicle API Needs Research,,"Credential reuse can be difficult to prove as malicious.  However,  a more common example would be an impossible travel alerts.  Impossible travel is when a user logs into a device from one IP and then from another IP within a short period of time.  Using geolocation, it is possible to determine that they could not have reasonably traveled from geoIP location 1 to geoIP location 2.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events","DE.CM-09: Computing hardware and software, runtime environments, and their data are monitored to find potentially adverse events",Ex3: Monitor software configurations for deviations from security baselines,"CCMv4.0: CCC-07
+CCMv4.0: IVS-06
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-09
+CCMv4.0: UEM-10
+CCMv4.0: UEM-11
+CIS Controls v8.0: 10.1
+CRI Profile v2.0: DE.CM-09
+CRI Profile v2.0: DE.CM-09.01
+CRI Profile v2.0: DE.CM-09.02
+CRI Profile v2.0: DE.CM-09.03
+CSF v1.1: PR.DS-6
+CSF v1.1: PR.DS-8
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: AC-09
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: CM-06
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11
+SP 800-53 Rev 5.1.1: SC-34
+SP 800-53 Rev 5.1.1: SC-35
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-07",Yes,Chronicle API Needs Research,,"This Example could cover a broad scope of possibilities.  However, the most common way to provide that software configurations have not changed (especially, with the PCI-DSS framework) is to use file integrity monitoring (FIM).  The query will demonstrate a FIM-based alert.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events","DE.CM-09: Computing hardware and software, runtime environments, and their data are monitored to find potentially adverse events",Ex4: Monitor hardware and software for signs of tampering,"CCMv4.0: CCC-07
+CCMv4.0: IVS-06
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-09
+CCMv4.0: UEM-10
+CCMv4.0: UEM-11
+CIS Controls v8.0: 10.1
+CRI Profile v2.0: DE.CM-09
+CRI Profile v2.0: DE.CM-09.01
+CRI Profile v2.0: DE.CM-09.02
+CRI Profile v2.0: DE.CM-09.03
+CSF v1.1: PR.DS-6
+CSF v1.1: PR.DS-8
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: AC-09
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: CM-06
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11
+SP 800-53 Rev 5.1.1: SC-34
+SP 800-53 Rev 5.1.1: SC-35
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-07",No,None,,"While it is possible to ingest hardware alarm events to alert on tampering, this would require custom queries based on the make and model of the technology to be successful.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Continuous Monitoring (DE.CM): Assets are monitored to find anomalies, indicators of compromise, and other potentially adverse events","DE.CM-09: Computing hardware and software, runtime environments, and their data are monitored to find potentially adverse events","Ex5: Use technologies with a presence on endpoints to detect cyber health issues (e.g., missing patches, malware infections, unauthorized software), and redirect the endpoints to a remediation environment before access is authorized","CCMv4.0: CCC-07
+CCMv4.0: IVS-06
+CCMv4.0: LOG-01
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-08
+CCMv4.0: LOG-10
+CCMv4.0: LOG-11
+CCMv4.0: TVM-02
+CCMv4.0: TVM-10
+CCMv4.0: UEM-09
+CCMv4.0: UEM-10
+CCMv4.0: UEM-11
+CIS Controls v8.0: 10.1
+CRI Profile v2.0: DE.CM-09
+CRI Profile v2.0: DE.CM-09.01
+CRI Profile v2.0: DE.CM-09.02
+CRI Profile v2.0: DE.CM-09.03
+CSF v1.1: PR.DS-6
+CSF v1.1: PR.DS-8
+CSF v1.1: DE.CM-4
+CSF v1.1: DE.CM-5
+CSF v1.1: DE.CM-7
+SP 800-53 Rev 5.1.1: AC-04
+SP 800-53 Rev 5.1.1: AC-09
+SP 800-53 Rev 5.1.1: AU-12
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: CM-03
+SP 800-53 Rev 5.1.1: CM-06
+SP 800-53 Rev 5.1.1: CM-10
+SP 800-53 Rev 5.1.1: CM-11
+SP 800-53 Rev 5.1.1: SC-34
+SP 800-53 Rev 5.1.1: SC-35
+SP 800-53 Rev 5.1.1: SI-04
+SP 800-53 Rev 5.1.1: SI-07",Yes,Chronicle API Needs Research,,"The ability to redirect endpoints to a remediation environment (or depending on the manufacturer, change their VLAN to a remedation environment) is based on the make and model of the technology being used.  This would require custom queries specific to the technology that has been implemented.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-02: Potentially adverse events are analyzed to better understand associated activities,Ex1: Use security information and event management (SIEM) or other tools to continuously monitor log events for known malicious and suspicious activity,"CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CCMv4.0: UEM-09
+CIS Controls v8.0: 8.11
+CRI Profile v2.0: DE.AE-02
+CRI Profile v2.0: DE.AE-02.01
+CRI Profile v2.0: DE.AE-02.02
+CSF v1.1: DE.AE-2
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: SI-04",Yes,Chronicle API Needs Research,,"Generation of any alert events proves that a SIEM technology is actively monitoring the environment, or at least a set of log sources for an environment.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-02: Potentially adverse events are analyzed to better understand associated activities,"Ex2: Utilize up-to-date cyber threat intelligence in log analysis tools to improve detection accuracy and characterize threat actors, their methods, and indicators of compromise","CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CCMv4.0: UEM-09
+CIS Controls v8.0: 8.11
+CRI Profile v2.0: DE.AE-02
+CRI Profile v2.0: DE.AE-02.01
+CRI Profile v2.0: DE.AE-02.02
+CSF v1.1: DE.AE-2
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: SI-04",Yes,Chronicle API Needs Research,,Every SIEM technology utilizes some sort of threat intelligence source for indicators of compromise.  It will take research to determine how to demonstrate ingested IOCs and update to date threat intelligence (if it is possible at all).,FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-02: Potentially adverse events are analyzed to better understand associated activities,Ex3: Regularly conduct manual reviews of log events for technologies that cannot be sufficiently monitored through automation,"CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CCMv4.0: UEM-09
+CIS Controls v8.0: 8.11
+CRI Profile v2.0: DE.AE-02
+CRI Profile v2.0: DE.AE-02.01
+CRI Profile v2.0: DE.AE-02.02
+CSF v1.1: DE.AE-2
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: SI-04",No,None,,This would need to be performed manually on log sources which are not ingestible into a SIEM.  An example would be keycard logs for an office space.  Many keycard systems cannot export their logs via syslog or other common medium.  The logs must be reviewed manually for adverse activity.,FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-02: Potentially adverse events are analyzed to better understand associated activities,Ex4: Use log analysis tools to generate reports on their findings,"CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CCMv4.0: UEM-09
+CIS Controls v8.0: 8.11
+CRI Profile v2.0: DE.AE-02
+CRI Profile v2.0: DE.AE-02.01
+CRI Profile v2.0: DE.AE-02.02
+CSF v1.1: DE.AE-2
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: SI-04",Yes,Chronicle API Needs Research,,The alerts that are genereated for DE.AE-02 Ex 1 sufficiently demonstrate reporting from log analysis tool,FALSE,,DE.AE-02 Ex1,,0,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-03: Information is correlated from multiple sources,Ex1: Constantly transfer log data generated by other sources to a relatively small number of log servers,"CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CRI Profile v2.0: DE.AE-03
+CRI Profile v2.0: DE.AE-03.01
+CRI Profile v2.0: DE.AE-03.02
+CSF v1.1: DE.AE-3
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,Done,"The UDM query will show multiple servers and the quantity of log events that they have been sent over a period of time.
+
+Note:  This is an indiscriminant query that will find all log sources, the number of distinct ""principal.hostnames"" sending logs, and the total number of events sent by that log source type.",FALSE,Agnostic,1.0,,"$log_types = $e.metadata.log_type
+$log_types = /.*/
+
+match:
+    $log_types
+
+outcome:
+    $count_principal_hosts = count_distinct($e.principal.hostname)
+    $events_count = count_distinct($e.metadata.id)
+
+order:
+    $log_types",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-03: Information is correlated from multiple sources,"Ex2: Use event correlation technology (e.g., SIEM) to collect information captured by multiple sources","CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CRI Profile v2.0: DE.AE-03
+CRI Profile v2.0: DE.AE-03.01
+CRI Profile v2.0: DE.AE-03.02
+CSF v1.1: DE.AE-3
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SI-04",Yes,UDM Search with YL2,In progress,Event correlation is at the heart of any SIEM technology.  It will require research to demonstrate that correlation is occuring.  Perhaps showing log failures/success to trigger an alert sufficiently demonstrates correlation.,FALSE,Agnostic,None,,"$correlation_description = $e.security_result.description
+$correlation_description = /.*/
+$severity = $e.security_result.severity 
+
+$e.security_result.alert_state = ""ALERTING""
+
+match:
+    $correlation_description
+
+outcome:
+    $log_type = array_distinct($e.metadata.log_type)
+    $high_or_critical = if($severity = ""HIGH"", ""Yes"", ""No"")
+    $criticality = array_distinct($severity )",
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-03: Information is correlated from multiple sources,Ex3: Utilize cyber threat intelligence to help correlate events among log sources,"CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: SEF-05
+CRI Profile v2.0: DE.AE-03
+CRI Profile v2.0: DE.AE-03.01
+CRI Profile v2.0: DE.AE-03.02
+CSF v1.1: DE.AE-3
+SP 800-53 Rev 5.1.1: AU-06
+SP 800-53 Rev 5.1.1: CA-07
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SI-04",Yes,Chronicle API Needs Research,,This query involves an alert with an known malicious IP address.  Research will need to be performed to determine whether the IOC information provides the appropriate metadata to demonstrate that the IOC was correlated with a threat intelligence source.,FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-06: Information on adverse events is provided to authorized staff and tools,"Ex1: Use cybersecurity software to generate alerts and provide them to the security operations center (SOC), incident responders, and incident response tools","CCMv4.0: CCC-07
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-13
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CRI Profile v2.0: DE.AE-06
+CRI Profile v2.0: DE.AE-06.01
+CSF v1.1: DE.DP-4
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-10",Yes,Chronicle API Needs Research,,The alerts that are genereated for DE.AE-02 Ex 1 sufficiently demonstrate reporting from log analysis tool,FALSE,,DE.AE-02 Ex1,,0,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-06: Information on adverse events is provided to authorized staff and tools,Ex2: Incident responders and other authorized personnel can access log analysis findings at all times,"CCMv4.0: CCC-07
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-13
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CRI Profile v2.0: DE.AE-06
+CRI Profile v2.0: DE.AE-06.01
+CSF v1.1: DE.DP-4
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-10",No,None,,This type of evidence would likely need to be fulfilled by showing a service level agreement or some other compliance agreement for the SIEM/log tool in question.,FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-06: Information on adverse events is provided to authorized staff and tools,Ex3: Automatically create and assign tickets in the organization's ticketing system when certain types of alerts occur,"CCMv4.0: CCC-07
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-13
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CRI Profile v2.0: DE.AE-06
+CRI Profile v2.0: DE.AE-06.01
+CSF v1.1: DE.DP-4
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-10",No,None,,"Some SIEMs have the ability to integrate directly with a ticketing system.  However, each is done in a manner speciifc to the SIEM and tickeing system.  In many cases, this action is left to a SOAR (Security Orchestration and Automated Response) technology.",FALSE,,,,,
+DETECT (DE): Possible cybersecurity attacks and compromises are found and analyzed,"Adverse Event Analysis (DE.AE): Anomalies, indicators of compromise, and other potentially adverse events are analyzed to characterize the events and detect cybersecurity incidents",DE.AE-06: Information on adverse events is provided to authorized staff and tools,Ex4: Manually create and assign tickets in the organization's ticketing system when technical staff discover indicators of compromise,"CCMv4.0: CCC-07
+CCMv4.0: LOG-03
+CCMv4.0: LOG-05
+CCMv4.0: LOG-13
+CCMv4.0: SEF-05
+CCMv4.0: SEF-06
+CRI Profile v2.0: DE.AE-06
+CRI Profile v2.0: DE.AE-06.01
+CSF v1.1: DE.DP-4
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: PM-15
+SP 800-53 Rev 5.1.1: PM-16
+SP 800-53 Rev 5.1.1: RA-03
+SP 800-53 Rev 5.1.1: RA-10",No,None,,This evidence would need to be collected manually from the ticketing system.,FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-01: The incident response plan is executed in coordination with relevant third parties once an incident is declared,Ex1: Detection technologies automatically report confirmed incidents,"CCMv4.0: BCR-07
+CCMv4.0: IVS-09
+CCMv4.0: SEF-01
+CCMv4.0: SEF-03
+CCMv4.0: SEF-07
+CIS Controls v8.0: 17.4
+CRI Profile v2.0: RS.MA-01
+CRI Profile v2.0: RS.MA-01.01
+CSF v1.1: RS.RP-1
+CSF v1.1: RS.CO-4
+SP 800-53 Rev 5.1.1: IR-06
+SP 800-53 Rev 5.1.1: IR-07
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SR-03
+SP 800-53 Rev 5.1.1: SR-08",Yes,Chronicle API Needs Research,,"Any security technology will report on incidents that it believes are ""confirmed incidents.""  However, without human intervention, often it cannot be proven that the incident is confirmed.  Instead, the evidence that can be gathered will be incidents that the SIEM/security technology believes are confirmed.  In this case, any alert should satisfy this Example.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-01: The incident response plan is executed in coordination with relevant third parties once an incident is declared,Ex2: Request incident response assistance from the organization's incident response outsourcer,"CCMv4.0: BCR-07
+CCMv4.0: IVS-09
+CCMv4.0: SEF-01
+CCMv4.0: SEF-03
+CCMv4.0: SEF-07
+CIS Controls v8.0: 17.4
+CRI Profile v2.0: RS.MA-01
+CRI Profile v2.0: RS.MA-01.01
+CSF v1.1: RS.RP-1
+CSF v1.1: RS.CO-4
+SP 800-53 Rev 5.1.1: IR-06
+SP 800-53 Rev 5.1.1: IR-07
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SR-03
+SP 800-53 Rev 5.1.1: SR-08",No,None,,"This type of evidence would need to be collected manually via email, SOAR case, phone log, or other mechanism to prove that the outsourcer was contacted.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-01: The incident response plan is executed in coordination with relevant third parties once an incident is declared,Ex3: Designate an incident lead for each incident,"CCMv4.0: BCR-07
+CCMv4.0: IVS-09
+CCMv4.0: SEF-01
+CCMv4.0: SEF-03
+CCMv4.0: SEF-07
+CIS Controls v8.0: 17.4
+CRI Profile v2.0: RS.MA-01
+CRI Profile v2.0: RS.MA-01.01
+CSF v1.1: RS.RP-1
+CSF v1.1: RS.CO-4
+SP 800-53 Rev 5.1.1: IR-06
+SP 800-53 Rev 5.1.1: IR-07
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SR-03
+SP 800-53 Rev 5.1.1: SR-08",No,None,,"This would be dictated by policies and procedures, and would need to be performed at the time of incident.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-01: The incident response plan is executed in coordination with relevant third parties once an incident is declared,"Ex4: Initiate execution of additional cybersecurity plans as needed to support incident response (for example, business continuity and disaster recovery)","CCMv4.0: BCR-07
+CCMv4.0: IVS-09
+CCMv4.0: SEF-01
+CCMv4.0: SEF-03
+CCMv4.0: SEF-07
+CIS Controls v8.0: 17.4
+CRI Profile v2.0: RS.MA-01
+CRI Profile v2.0: RS.MA-01.01
+CSF v1.1: RS.RP-1
+CSF v1.1: RS.CO-4
+SP 800-53 Rev 5.1.1: IR-06
+SP 800-53 Rev 5.1.1: IR-07
+SP 800-53 Rev 5.1.1: IR-08
+SP 800-53 Rev 5.1.1: SR-03
+SP 800-53 Rev 5.1.1: SR-08",No,None,,"This would be dictated by policies and procedures, and would need to be performed at the time of incident.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-02: Incident reports are triaged and validated,Ex1: Preliminarily review incident reports to confirm that they are cybersecurity-related and necessitate incident response activities,"CCMv4.0: SEF-06
+CRI Profile v2.0: RS.MA-02
+CRI Profile v2.0: RS.MA-02.01
+CSF v1.1: RS.AN-1
+CSF v1.1: RS.AN-2
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-06",No,None,,"This would be dictated by policies and procedures, and would need to be performed at the time of incident.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-02: Incident reports are triaged and validated,Ex2: Apply criteria to estimate the severity of an incident,"CCMv4.0: SEF-06
+CRI Profile v2.0: RS.MA-02
+CRI Profile v2.0: RS.MA-02.01
+CSF v1.1: RS.AN-1
+CSF v1.1: RS.AN-2
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-06",Partial,Chronicle API Needs Research,,"This would be dictated by policies and procedures, and would need to be performed at the time of incident.  However, incident evidence in the SIEM would aid by delineating whether incidenct was Low, Medium, High, or Critical.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-03: Incidents are categorized and prioritized,"Ex1: Further review and categorize incidents based on the type of incident (e.g., data breach, ransomware, DDoS, account compromise)","CCMv4.0: SEF-02
+CCMv4.0: SEF-06
+CRI Profile v2.0: RS.MA-03
+CRI Profile v2.0: RS.MA-03.01
+CSF v1.1: RS.AN-4
+CSF v1.1: RS.AN-2
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-06",Partial,Chronicle API Needs Research,,Both the SIEM or security technology as well as human intelligence would be necessary to perform this task.  The SIEM would attempt to properly categorize the incident based on the correlated evidence.  Human intelligence would be necessary to ultimatley verify and categorize the incident correctly.,FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-03: Incidents are categorized and prioritized,"Ex2: Prioritize incidents based on their scope, likely impact, and time-critical nature","CCMv4.0: SEF-02
+CCMv4.0: SEF-06
+CRI Profile v2.0: RS.MA-03
+CRI Profile v2.0: RS.MA-03.01
+CSF v1.1: RS.AN-4
+CSF v1.1: RS.AN-2
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-06",Partial,Chronicle API Needs Research,,Both the SIEM or security technology as well as human intelligence would be necessary to perform this task.  The SIEM would attempt to properly categorize the incident based on the correlated evidence.  Human intelligence would be necessary to ultimatley verify and categorize the incident correctly.,FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Management (RS.MA): Responses to detected cybersecurity incidents are managed,RS.MA-03: Incidents are categorized and prioritized,Ex3: Select incident response strategies for active incidents by balancing the need to quickly recover from an incident with the need to observe the attacker or conduct a more thorough investigation,"CCMv4.0: SEF-02
+CCMv4.0: SEF-06
+CRI Profile v2.0: RS.MA-03
+CRI Profile v2.0: RS.MA-03.01
+CSF v1.1: RS.AN-4
+CSF v1.1: RS.AN-2
+SP 800-53 Rev 5.1.1: IR-04
+SP 800-53 Rev 5.1.1: IR-05
+SP 800-53 Rev 5.1.1: IR-06",No,None,,"This would be dictated by policies and procedures, and would need to be performed at the time of incident.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Mitigation (RS.MI): Activities are performed to prevent expansion of an event and mitigate its effects,RS.MI-01: Incidents are contained,"Ex1: Cybersecurity technologies (e.g., antivirus software) and cybersecurity features of other technologies (e.g., operating systems, network infrastructure devices) automatically perform containment actions","CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: IVS-09
+CCMv4.0: SEF-02
+CCMv4.0: UEM-09
+CRI Profile v2.0: RS.MI-01
+CRI Profile v2.0: RS.MI-01.01
+CSF v1.1: RS.MI-1
+SP 800-53 Rev 5.1.1: IR-04",Yes,UDM Search with YL2,Done,"Logs from the cybersecurity technology will typically describe the action that was taken in response to the threat.  In many cases the query would need to be specific to the technology.  However, we'll try to construct a general query for antivirus responses.
+
+Note:  The current version of the query checks for either SentinelOne or Crowdstrike.  However, adding other vendor names is trivial as long they are known (they can be added to the regex filter for $e.metadata.vendor_name.",FALSE,Agnostic,1.0,,"$hostname = $e.principal.hostname
+$hostname = /.*/
+$hostname != """"
+
+$e.metadata.vendor_name = /SentinelOne|Crowdstrike/ nocase
+($e.security_result.action = ""BLOCK"" OR
+    $e.security_result.action = ""QUARANTINE"" OR
+    $e.security_result.action = ""ALLOW_WITH_MODIFICATION"")
+
+$e.security_result.action != ""UNKNOWN_ACTION""
+
+match:
+    $hostname
+
+outcome:
+    $vendor_name = array_distinct($e.metadata.vendor_name)
+    $security_action = array_distinct($e.security_result.action)
+    $categories = array_distinct($e.security_result.category)
+    $occurences = count($e.metadata.id)
+
+order:
+    $occurences desc
+
+limit: 25",
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Mitigation (RS.MI): Activities are performed to prevent expansion of an event and mitigate its effects,RS.MI-01: Incidents are contained,Ex2: Allow incident responders to manually select and perform containment actions,"CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: IVS-09
+CCMv4.0: SEF-02
+CCMv4.0: UEM-09
+CRI Profile v2.0: RS.MI-01
+CRI Profile v2.0: RS.MI-01.01
+CSF v1.1: RS.MI-1
+SP 800-53 Rev 5.1.1: IR-04",No,None,,This SIEM is not directly performing the security response action.  This evidence would need to be gathered manually by demonstrating that the security technology has the ability to accept and execute manual intervention.,FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Mitigation (RS.MI): Activities are performed to prevent expansion of an event and mitigate its effects,RS.MI-01: Incidents are contained,"Ex3: Allow a third party (e.g., internet service provider, managed security service provider) to perform containment actions on behalf of the organization","CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: IVS-09
+CCMv4.0: SEF-02
+CCMv4.0: UEM-09
+CRI Profile v2.0: RS.MI-01
+CRI Profile v2.0: RS.MI-01.01
+CSF v1.1: RS.MI-1
+SP 800-53 Rev 5.1.1: IR-04",No,None,,"This type of evidence would be demonstrated by examining the contract which states which actions the third party may perform.  Additional, evidence should be collected where it has been demonstrated that the third party has actually performed said actions at the very least in testing in the organization's environment.",FALSE,,,,,
+RESPOND (RS): Actions regarding a detected cybersecurity incident are taken,Incident Mitigation (RS.MI): Activities are performed to prevent expansion of an event and mitigate its effects,RS.MI-01: Incidents are contained,Ex4: Automatically transfer compromised endpoints to a remediation virtual local area network (VLAN),"CCMv4.0: CEK-19
+CCMv4.0: CEK-20
+CCMv4.0: IVS-09
+CCMv4.0: SEF-02
+CCMv4.0: UEM-09
+CRI Profile v2.0: RS.MI-01
+CRI Profile v2.0: RS.MI-01.01
+CSF v1.1: RS.MI-1
+SP 800-53 Rev 5.1.1: IR-04",Partial,UDM Search with YL2,Custom,"This would be a response action perform by a switch, firewall, wireless access point, et cetera and would not be the function of the SIEM.  However, the logs of the response would likely be sent to the SIEM.  So, a custom query specific to the manufacturer should be able to be created to use as evidence.",FALSE,CustomRequired,None,,,
+,,,,,Select,,,,FALSE,,,,,
+,,,,,Select,,,,FALSE,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
