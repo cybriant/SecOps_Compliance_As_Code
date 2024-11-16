@@ -10,8 +10,7 @@ After clonining the repo (or simply downloading the script needed perform the fo
 1. Execute "convert_spreadsheet_to_JSON.py" to create the JSON mapping from the latest version of the compliance framework Excel spreadsheet. _Note:  You must have the appropriate compliance in the same directory, and if it is different from the default (NIST_to_SecOps.xlsx) you edit and update the convert_spreadsheet_to_JSON.py file to the appropriate "in_file_name"_
 2. Edit the consts.py to have the applicable variables for your environment.  Variables are explained under the Files section of this README.
 3. Execute udm_search.py.  For example, on Windows:  "python3.exe udm_search.py" and on Linux:  "python3 udm_search.py"
-4. Run export_to_pdf.py:  For example, on Windows:  "python3.exe export_to_pdf.py" and on Linux:  "python3 export_to_pdf.py"
-5. By default, the export_to_pdf.py script will create the "ComplianceReports" folder, and then populate all of the respective PDF reports in that folder.
+4. By default, the udm_search.py script will create the "ComplianceReports" folder, and then populate all of the respective PDF reports in that folder.  Additionally, it will drop the JSON data in that folder.
 
 **Please note**:  SecOps does not yet support Aggregate Queries from the API.  It is expected that this feature that can currently be run in the UDM Search Console in the Web UI for SecOps will be available in the near future for the API.  The Pretty Print Queries in the Excel spreadsheet can be run in the Web UI to gather the corresponding compliance evidence data from the SIEM.
 
