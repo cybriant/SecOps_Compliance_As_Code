@@ -1,0 +1,274 @@
+lookml:
+- dashboard: nist_csf_2_0_dashboards
+  description: ""
+  elements:
+  - col: 0
+    column_limit: 50
+    conditional_formatting_include_nulls: false
+    conditional_formatting_include_totals: false
+    defaults_version: 1
+    enable_conditional_formatting: false
+    explore: entity_graph_connector
+    fields:
+    - entity_graph.entity__asset__hostname
+    - entity_graph__entity__asset__mac.entity_graph__entity__asset__mac
+    - entity_graph.metric__first_seen_max_date
+    - entity_graph.metric__last_seen_max_date
+    filters:
+      entity_graph.time_filter: ""
+      entity_graph__entity__asset__mac.entity_graph__entity__asset__mac: -NULL
+    header_font_size: 12
+    header_text_alignment: left
+    height: 5
+    hidden_pivots: {}
+    hide_row_totals: false
+    hide_totals: false
+    label_density: 25
+    legend_position: center
+    limit: 500
+    limit_displayed_rows: false
+    listen: {}
+    model: scn
+    name: R28 PRAA-01 Ex3 - Unique Identifier for Assets
+    note_display: above
+    note_state: collapsed
+    note_text: 'First Seen and Last Seen doesn''t work correctly:  Reports 1970-01-1
+      because it can''t parse correct time'
+    ordering: none
+    plot_size_by_field: false
+    point_style: none
+    row: 6
+    rows_font_size: 12
+    show_null_labels: false
+    show_row_numbers: true
+    show_silhouette: false
+    show_totals_labels: false
+    show_value_labels: false
+    show_view_names: false
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    size_to_fit: true
+    sorts:
+    - entity_graph__entity__asset__mac.entity_graph__entity__asset__mac desc
+    stacking: ""
+    table_theme: white
+    title: R28 PRAA-01 Ex3 - Unique Identifier for Assets
+    totals_color: '#808080'
+    transpose: false
+    trellis: ""
+    truncate_text: true
+    type: looker_grid
+    width: 24
+    x_axis_gridlines: false
+    x_axis_reversed: false
+    x_axis_scale: auto
+    y_axis_combined: true
+    y_axis_gridlines: true
+    y_axis_reversed: false
+    y_axis_scale_mode: linear
+    y_axis_tick_density: default
+    y_axis_tick_density_custom: 5
+  - col: 0
+    column_limit: 300
+    defaults_version: 1
+    explore: ingestion_metrics_connector
+    fields:
+    - ingestion_metrics.log_type
+    - ingestion_metrics.timestamp_month
+    - ingestion_metrics.total_size_bytes_GB
+    fill_fields:
+    - ingestion_metrics.timestamp_month
+    filters:
+      ingestion_metrics.log_type: -NULL
+    height: 10
+    hidden_pivots: {}
+    hide_legend: false
+    interpolation: linear
+    label_density: 25
+    legend_position: right
+    limit: 500
+    limit_displayed_rows: false
+    listen: {}
+    model: scn
+    name: R52 PRIR-04 Ex2 - Forecast Future Needs
+    ordering: none
+    pivots:
+    - ingestion_metrics.log_type
+    plot_size_by_field: false
+    point_style: none
+    row: 11
+    show_null_labels: false
+    show_null_points: true
+    show_silhouette: false
+    show_totals_labels: false
+    show_value_labels: false
+    show_view_names: false
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    sorts:
+    - ingestion_metrics.log_type
+    - ingestion_metrics.timestamp_month desc
+    stacking: normal
+    title: R52 PRIR-04 Ex2 - Forecast Future Needs
+    totals_color: '#808080'
+    trellis: ""
+    type: looker_column
+    width: 24
+    x_axis_gridlines: false
+    x_axis_reversed: false
+    x_axis_scale: auto
+    x_axis_zoom: true
+    y_axis_combined: true
+    y_axis_gridlines: true
+    y_axis_reversed: false
+    y_axis_scale_mode: linear
+    y_axis_tick_density: default
+    y_axis_tick_density_custom: 5
+    y_axis_zoom: true
+  - col: 0
+    column_limit: 50
+    defaults_version: 1
+    explore: events_connector
+    fields:
+    - events.network__application_protocol_enum_name
+    - events.metadata__event_timestamp_month
+    - events.count
+    filters:
+      events.count: '>1'
+      events.time_filter: 12 months
+    height: 11
+    hidden_pivots: {}
+    interpolation: linear
+    label_density: 25
+    legend_position: right
+    limit: 500
+    limit_displayed_rows: false
+    model: scn
+    name: R53 DECM-01 Ex1 - Monitor Network Services
+    pivots:
+    - events.network__application_protocol_enum_name
+    plot_size_by_field: false
+    point_style: none
+    row: 21
+    show_null_points: true
+    show_value_labels: true
+    show_view_names: false
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    sorts:
+    - events.network__application_protocol_enum_name
+    - events.metadata__event_timestamp_month desc
+    stacking: ""
+    title: R53 DECM-01 Ex1 - Monitor Network Services
+    trellis: ""
+    type: looker_line
+    width: 24
+    x_axis_gridlines: false
+    x_axis_reversed: false
+    x_axis_scale: auto
+    x_axis_zoom: true
+    y_axis_combined: true
+    y_axis_gridlines: true
+    y_axis_reversed: false
+    y_axis_scale_mode: linear
+    y_axis_tick_density: default
+    y_axis_tick_density_custom: 5
+    y_axis_zoom: true
+  - col: 0
+    column_limit: 50
+    defaults_version: 1
+    explore: events_connector
+    fields:
+    - events.network__sent_bytes
+    - events.metadata__event_timestamp_week
+    - events.network__received_bytes
+    filters:
+      events.network__received_bytes: NOT NULL
+      events.network__sent_bytes: NOT NULL
+      events.time_filter: 24 weeks
+    height: 6
+    hidden_pivots: {}
+    interpolation: linear
+    label_density: 25
+    legend_position: center
+    limit: 500
+    limit_displayed_rows: false
+    model: scn
+    name: R56 DECM-01 Ex4 - Sent Bytes over Time
+    plot_size_by_field: false
+    point_style: none
+    row: 32
+    show_null_points: true
+    show_value_labels: false
+    show_view_names: false
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    sorts:
+    - events.network__sent_bytes desc
+    stacking: ""
+    title: R56 DECM-01 Ex4 - Sent Bytes over Time
+    trellis: ""
+    type: looker_line
+    width: 24
+    x_axis_gridlines: false
+    x_axis_reversed: false
+    x_axis_scale: auto
+    x_axis_zoom: true
+    y_axis_combined: true
+    y_axis_gridlines: true
+    y_axis_reversed: false
+    y_axis_scale_mode: linear
+    y_axis_tick_density: default
+    y_axis_tick_density_custom: 5
+    y_axis_zoom: true
+  - col: 0
+    column_limit: 50
+    conditional_formatting_include_nulls: false
+    conditional_formatting_include_totals: false
+    defaults_version: 1
+    enable_conditional_formatting: false
+    explore: entity_graph_connector
+    fields:
+    - entity_graph.entity__hostname
+    - entity_graph.metadata__creation_timestamp_min_second
+    - entity_graph__metadata__event_metadata__base_labels__log_types.entity_graph__metadata__event_metadata__base_labels__log_types
+    filters:
+      entity_graph.metadata__entity_type_enum_name: ASSET
+      entity_graph.time_filter: 24 hours
+    header_font_size: 12
+    header_text_alignment: left
+    height: 6
+    hide_row_totals: false
+    hide_totals: false
+    limit: 500
+    limit_displayed_rows: false
+    model: scn
+    name: R2 IDAM-01 Ex2 - Detect New Hardware
+    row: 0
+    rows_font_size: 12
+    show_row_numbers: true
+    show_view_names: false
+    size_to_fit: true
+    sorts:
+    - entity_graph.metadata__creation_timestamp_min_second desc 0
+    table_theme: white
+    title: R2 IDAM-01 Ex2 - Detect New Hardware
+    transpose: false
+    truncate_text: true
+    type: looker_grid
+    width: 24
+  layout: newspaper
+  title: NIST CSF 2.0 Dashboards
+metadata:
+  exported_at: "2024-11-23T12:42:11-08:00"
+  file_fingerprint: "265189128718851940611829235297459310707"
+  looker_version: 24.12.51
+  version: "1"
